@@ -1,3 +1,4 @@
+//test2
 // ------------------------- OpenPose Library Tutorial - Pose - Example 1 - Extract from Image -------------------------
 // This first example shows the user how to:
     // 1. Load an image (`filestream` module)
@@ -128,10 +129,12 @@ std::vector<cv::Point2f> getEstimated2DPoseVec(cv::Mat inputImage,
     const auto poseKeypoints = poseExtractorCaffe->getPoseKeypoints();
 
     std::vector<cv::Point2f> bodyPoints2D;
-    for(int i = 0; i<18 ;i++){
-        cv::Point2f _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
-        bodyPoints2D.push_back(_bodyPoint);
-        //cout<<bodyPoints2D[i]<<endl;
+    if(poseKeypoints.empty()!=1){
+        for(int i = 0; i<18 ;i++){
+            cv::Point2f _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
+            bodyPoints2D.push_back(_bodyPoint);
+            //cout<<bodyPoints2D[i]<<endl;
+        }
     }
     return bodyPoints2D;
 }
@@ -168,8 +171,14 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
 
 int main(int argc, char *argv[])
 {
-    cv::Mat colorImage = cv::imread("examples/media/goprosurfin.jpg");
+    cout<<"a"<<endl;
+    //cv::Mat colorImage = cv::imread("examples/media/goprosurfin.jpg");
+    //ビデオ入力獲得
+    cv::VideoCapture goproL("media/3WD.mp4");
+    cv::VideoCapture goproR("media/3WD.mp4");
+    cout<<"b"<<endl;
 
+    cv::Mat ColorPpL, ColorPpR;
     // Initializing google logging (Caffe uses it for logging)
     google::InitGoogleLogging("openPoseTutorialPose1");
 
@@ -191,10 +200,11 @@ int main(int argc, char *argv[])
     
     // Step 2 - Read Google flags (user defined configuration)
     // outputSize
-    //規定値から変更。入力画像のサイズを読み取り、その画像における関節座標を取得する
+    //規定値から変更。入力動画のサイズを読み取り、その画像における関節座標を取得する
     stringstream ss;
-    ss<<colorImage.cols<<"x"<<colorImage.rows<<endl;
+    ss<<(int)goproL.get(CV_CAP_PROP_FRAME_WIDTH)<<"x"<<(int)goproL.get(CV_CAP_PROP_FRAME_HEIGHT)<<endl;
     const auto outputSize = op::flagsToPoint(ss.str());
+    cout<<"c"<<endl;
     // netInputSize
     const auto netInputSize = op::flagsToPoint(FLAGS_net_resolution, "656x368");
     // netOutputSize
@@ -223,47 +233,91 @@ int main(int argc, char *argv[])
     poseExtractorCaffe.initializationOnThread();
     poseRenderer.initializationOnThread();
 
-    //ディレクトリにアクセス
-    //Ex.("media/"")
+    int frameNum = std::min(goproL.get(CV_CAP_PROP_FRAME_COUNT), goproR.get(CV_CAP_PROP_FRAME_COUNT));
+    Mat goproLImg, goproRImg;
+    std::vector<std::vector<cv::Point2f>> bodyPoints2D;
+    for(int i = 0; i<frameNum;i++){
+        cout<<"d"<<endl;
+        goproL >> goproLImg;
+        goproR >> goproRImg;
+        //ディレクトリにアクセス
+        //Ex.("media/"")
+        
+        // 動画のフレームを抜き出しcolorImage
+        // 各フレームに対しopenposeを実行して座標を描画してMatの形で獲得
+        
+        /*
+        // openposeを実行してcv::Matを返す
+        cv::Mat outputImg = execOp(colorImage,
+                                    &cvMatToOpInput,
+                                    &cvMatToOpOutput,
+                                    &poseExtractorCaffe,
+                                    &poseRenderer,
+                                    &opOutputToCvMat);
+        */
+        // openposeを実行して関節座標をベクトルで返す
+        cout<<"e"<<endl;
+        std::vector<cv::Point2f> goproLJointVec = getEstimated2DPoseVec(goproLImg,
+                                                                          &cvMatToOpInput,
+                                                                          &cvMatToOpOutput,
+                                                                          &poseExtractorCaffe);
+        std::vector<cv::Point2f> goproRJointVec = getEstimated2DPoseVec(goproRImg,
+                                                                          &cvMatToOpInput,
+                                                                          &cvMatToOpOutput,
+                                                                          &poseExtractorCaffe);
+        /*
+        // openposeを実行して関節座標をMatで返す
+        cv::Mat bodyPoints2DMat = getEstimated2DPoseMat(colorImage,
+                                                          &cvMatToOpInput,
+                                                          &cvMatToOpOutput,
+                                                          &poseExtractorCaffe);
+        */
 
-    // 動画のフレームを抜き出しcolorImage
-    // 各フレームに対しopenposeを実行して座標を描画してMatの形で獲得
-    
-    /*
-    // openposeを実行してcv::Matを返す
-    cv::Mat outputImg = execOp(colorImage,
-                                &cvMatToOpInput,
-                                &cvMatToOpOutput,
-                                &poseExtractorCaffe,
-                                &poseRenderer,
-                                &opOutputToCvMat);
-    */
-    // openposeを実行して関節座標をベクトルで返す
-    std::vector<cv::Point2f> bodyPoints2DVec = getEstimated2DPoseVec(colorImage,
-                                                                      &cvMatToOpInput,
-                                                                      &cvMatToOpOutput,
-                                                                      &poseExtractorCaffe);
-    /*
-    // openposeを実行して関節座標をMatで返す
-    cv::Mat bodyPoints2DMat = getEstimated2DPoseMat(colorImage,
-                                                      &cvMatToOpInput,
-                                                      &cvMatToOpOutput,
-                                                      &poseExtractorCaffe);
-    
-    */
-    for(int i = 0; i<18 ;i++){
-        cout<<"point["<<i<<"]"<<bodyPoints2DVec[i]<<endl;
-        cv::circle(colorImage, bodyPoints2DVec[i], 3, cv::Scalar(0,0,200), -1);
-        //std::cout << "bodyPoints2DVec[" <<  i << "] : " << bodyPoints2DVec[i] << std::endl;
+
+        cout<<"f"<<endl;
+
+        bodyPoints2D.push_back(goproLJointVec);
+        bodyPoints2D.push_back(goproRJointVec);
+
+        cv::Mat points4D, points3D;
+        std::vector<cv::Mat> _bodyPoints3D;
+
+        if(goproLJointVec.size()!=0 && goproRJointVec.size()!=0){
+            for(int i = 0; i<18 ;i++){
+                //cout<<"point["<<i<<"]"<<bodyPoints2DVec[i]<<endl;
+                cv::circle(goproLImg, goproLJointVec[i], 3, cv::Scalar(0,0,200), -1);
+                cv::circle(goproRImg, goproRJointVec[i], 3, cv::Scalar(0,0,200), -1);
+                //std::cout << "bodyPoints2DVec[" <<  i << "] : " << bodyPoints2DVec[i] << std::endl;
+                //
+                cv::triangulatePoints(ColorPpL,ColorPpR,cv::Mat(bodyPoints2D[0][i]),cv::Mat(bodyPoints2D[1][i]),points4D);
+                cv::convertPointsFromHomogeneous(points4D.reshape(4,1) ,points3D);
+                //cv::Point3f _bodyPoint(points3D.at<float>(0,0),points3D.at<float>(1,0),points3D.at<float>(2,0));
+                std::cout<<"points3D["<<i<<"] : "<<points3D<<std::endl;
+                _bodyPoints3D.push_back(points3D);
+            }
+        }
+        //「Mat形式の関節位置のベクトル」のベクトルを取得
+        //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
+        //bodyPoints3D.push_back(_bodyPoints3D);
+        std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
+
+        cout<<"g"<<endl;
+        cv::imshow("goproLImage",goproLImg);
+        cv::imshow("goproRImage",goproRImg);
+        cv::waitKey(1);
+        /*
+        if(int key = waitKey(113)){
+            return 1;
+        }
+        */
     }
-
+    /*
     cv::imshow("outputImage",colorImage);
-    
     cv::waitKey(0);
-
     if(int key = waitKey(113)){
         return 1;
     }
+    */
 
     return 0;
 }
