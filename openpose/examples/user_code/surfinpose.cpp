@@ -13,11 +13,23 @@
 #include <gflags/gflags.h> // DEFINE_bool, DEFINE_int32, DEFINE_int64, DEFINE_uint64, DEFINE_double, DEFINE_string
 #include <glog/logging.h> // google::InitGoogleLogging
 // OpenPose dependencies
+#include <openpose/headers.hpp>
 #include <openpose/core/headers.hpp>
 #include <openpose/filestream/headers.hpp>
 #include <openpose/gui/headers.hpp>
 #include <openpose/pose/headers.hpp>
 #include <openpose/utilities/headers.hpp>
+
+// Eigen
+#include <Eigen/Core>
+// OpenCV
+#include <opencv2/core.hpp>
+#include <opencv2/sfm.hpp>
+// OpenCV
+#include <opencv2/core/eigen.hpp>
+#include <opencv2/sfm/triangulation.hpp>
+#include <opencv2/sfm/projection.hpp>
+//#include <opencv2/sfm/triangulation.hpp>
 
 // See all the available parameter options withe the `--help` flag. E.g. `./build/examples/openpose/openpose.bin --help`.
 // Note: This command will show you flags for other unnecessary 3rdparty files. Check only the flags for the OpenPose
@@ -56,6 +68,140 @@ DEFINE_double(alpha_pose,               0.6,            "Blending factor (range 
 
 using namespace std;
 using namespace cv;
+
+void
+triangulateDLT( const Vec2d &xl, const Vec2d &xr,
+                const Matx34d &Pl, const Matx34d &Pr,
+                Vec3d &point3d )
+{
+    Matx44d design;
+    for (int i = 0; i < 4; ++i)
+    {
+        design(0,i) = xl(0) * Pl(2,i) - Pl(0,i);
+        design(1,i) = xl(1) * Pl(2,i) - Pl(1,i);
+        design(2,i) = xr(0) * Pr(2,i) - Pr(0,i);
+        design(3,i) = xr(1) * Pr(2,i) - Pr(1,i);
+    }
+
+    Vec4d XHomogeneous;
+    cv::SVD::solveZ(design, XHomogeneous);
+
+    homogeneousToEuclidean(XHomogeneous, point3d);
+}
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+
+/** @brief Triangulates the 3d position of 2d correspondences between n images, using the DLT
+ * @param x Input vectors of 2d points (the inner vector is per image). Has to be 2xN
+ * @param Ps Input vector with 3x4 projections matrices of each image.
+ * @param X Output vector with computed 3d point.
+ * Reference: it is the standard DLT; for derivation see appendix of Keir's thesis
+ */
+void
+triangulateNViews(const Mat_<double> &x, const std::vector<Matx34d> &Ps, Vec3d &X)
+{
+    CV_Assert(x.rows == 2);
+    unsigned nviews = x.cols;
+    CV_Assert(nviews == Ps.size());
+
+    cv::Mat_<double> design = cv::Mat_<double>::zeros(3*nviews, 4 + nviews);
+    for (unsigned i=0; i < nviews; ++i) {
+        for(char jj=0; jj<3; ++jj)
+            for(char ii=0; ii<4; ++ii)
+                design(3*i+jj, ii) = -Ps[i](jj, ii);
+        design(3*i + 0, 4 + i) = x(0, i);
+        design(3*i + 1, 4 + i) = x(1, i);
+        design(3*i + 2, 4 + i) = 1.0;
+    }
+
+    Mat X_and_alphas;
+    cv::SVD::solveZ(design, X_and_alphas);
+    homogeneousToEuclidean(X_and_alphas.rowRange(0, 4), X);
+}
+
+
+void
+triangulatePoints(InputArrayOfArrays _points2d, InputArrayOfArrays _projection_matrices,
+                  OutputArray _points3d)
+{
+    // check
+    size_t nviews = (unsigned) _points2d.total();
+    CV_Assert(nviews >= 2 && nviews == _projection_matrices.total());
+
+    // inputs
+    size_t n_points;
+    std::vector<Mat_<double> > points2d(nviews);
+    std::vector<Matx34d> projection_matrices(nviews);
+    {
+        std::vector<Mat> points2d_tmp;
+        _points2d.getMatVector(points2d_tmp);
+        n_points = points2d_tmp[0].cols;
+
+        std::vector<Mat> projection_matrices_tmp;
+        _projection_matrices.getMatVector(projection_matrices_tmp);
+
+        // Make sure the dimensions are right
+        for(size_t i=0; i<nviews; ++i) {
+            CV_Assert(points2d_tmp[i].rows == 2 && points2d_tmp[i].cols == n_points);
+            if (points2d_tmp[i].type() == CV_64F)
+                points2d[i] = points2d_tmp[i];
+            else
+                points2d_tmp[i].convertTo(points2d[i], CV_64F);
+
+            CV_Assert(projection_matrices_tmp[i].rows == 3 && projection_matrices_tmp[i].cols == 4);
+            if (projection_matrices_tmp[i].type() == CV_64F)
+              projection_matrices[i] = projection_matrices_tmp[i];
+            else
+              projection_matrices_tmp[i].convertTo(projection_matrices[i], CV_64F);
+        }
+    }
+
+    // output
+    _points3d.create(3, n_points, CV_64F);
+    cv::Mat points3d = _points3d.getMat();
+
+    // Two view
+    if( nviews == 2 )
+    {
+        const Mat_<double> &xl = points2d[0], &xr = points2d[1];
+
+        const Matx34d & Pl = projection_matrices[0];    // left matrix projection
+        const Matx34d & Pr = projection_matrices[1];    // right matrix projection
+
+        // triangulate
+        for( unsigned i = 0; i < n_points; ++i )
+        {
+            Vec3d point3d;
+            triangulateDLT( Vec2d(xl(0,i), xl(1,i)), Vec2d(xr(0,i), xr(1,i)), Pl, Pr, point3d );
+            for(char j=0; j<3; ++j)
+                points3d.at<double>(j, i) = point3d[j];
+        }
+    }
+    else if( nviews > 2 )
+    {
+        // triangulate
+        for( unsigned i=0; i < n_points; ++i )
+        {
+            // build x matrix (one point per view)
+            Mat_<double> x( 2, nviews );
+            for( unsigned k=0; k < nviews; ++k )
+            {
+                points2d.at(k).col(i).copyTo( x.col(k) );
+            }
+
+            Vec3d point3d;
+            triangulateNViews( x, projection_matrices, point3d );
+            for(char j=0; j<3; ++j)
+                points3d.at<double>(j, i) = point3d[j];
+        }
+    }
+}
+
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
+////////////////////////////////////////////////////
 
 //openposeを実行して骨格を描画したMatを返す
 cv::Mat execOp(cv::Mat inputImage,
@@ -169,6 +315,7 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
     return bodyPoints2D;
 }
 
+
 int main(int argc, char *argv[])
 {
     cout<<"a"<<endl;
@@ -179,6 +326,7 @@ int main(int argc, char *argv[])
     cout<<"b"<<endl;
 
     cv::Mat ColorPpL, ColorPpR;
+    std::vector<cv::Mat> Pp = {ColorPpL,ColorPpR};
     // Initializing google logging (Caffe uses it for logging)
     google::InitGoogleLogging("openPoseTutorialPose1");
 
@@ -280,26 +428,32 @@ int main(int argc, char *argv[])
         bodyPoints2D.push_back(goproRJointVec);
 
         cv::Mat points4D, points3D;
-        std::vector<cv::Mat> _bodyPoints3D;
+        std::vector<cv::Mat> _bodyPoints3D;;
 
+        
         if(goproLJointVec.size()!=0 && goproRJointVec.size()!=0){
             for(int i = 0; i<18 ;i++){
                 //cout<<"point["<<i<<"]"<<bodyPoints2DVec[i]<<endl;
                 cv::circle(goproLImg, goproLJointVec[i], 3, cv::Scalar(0,0,200), -1);
                 cv::circle(goproRImg, goproRJointVec[i], 3, cv::Scalar(0,0,200), -1);
                 //std::cout << "bodyPoints2DVec[" <<  i << "] : " << bodyPoints2DVec[i] << std::endl;
-                //
+
                 cv::triangulatePoints(ColorPpL,ColorPpR,cv::Mat(bodyPoints2D[0][i]),cv::Mat(bodyPoints2D[1][i]),points4D);
+                //std::vector<>
+                //cv::sfm::triangulatePoints();
+
                 cv::convertPointsFromHomogeneous(points4D.reshape(4,1) ,points3D);
                 //cv::Point3f _bodyPoint(points3D.at<float>(0,0),points3D.at<float>(1,0),points3D.at<float>(2,0));
                 std::cout<<"points3D["<<i<<"] : "<<points3D<<std::endl;
                 _bodyPoints3D.push_back(points3D);
             }
         }
+        */
+        
         //「Mat形式の関節位置のベクトル」のベクトルを取得
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
         //bodyPoints3D.push_back(_bodyPoints3D);
-        std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
+        //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
 
         cout<<"g"<<endl;
         cv::imshow("goproLImage",goproLImg);
@@ -311,6 +465,10 @@ int main(int argc, char *argv[])
         }
         */
     }
+    /*
+    cv::Mat points3d;
+    triangulatePoints(bodyPoints2D,Pp,points3d);
+    */
     /*
     cv::imshow("outputImage",colorImage);
     cv::waitKey(0);
