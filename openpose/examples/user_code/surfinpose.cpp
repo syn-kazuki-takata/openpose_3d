@@ -19,16 +19,16 @@
 #include <openpose/gui/headers.hpp>
 #include <openpose/pose/headers.hpp>
 #include <openpose/utilities/headers.hpp>
-
 // Eigen
 #include <Eigen/Core>
 // OpenCV
 #include <opencv2/core.hpp>
 #include <opencv2/sfm.hpp>
-// OpenCV
-#include <opencv2/core/eigen.hpp>
-#include <opencv2/sfm/triangulation.hpp>
-#include <opencv2/sfm/projection.hpp>
+#include <opencv2/opencv.hpp>
+//#include <opencv2/viz/viz3d.hpp>
+//#include <opencv2/core/eigen.hpp>
+//#include <opencv2/sfm/triangulation.hpp>
+//#include <opencv2/sfm/projection.hpp>
 //#include <opencv2/sfm/triangulation.hpp>
 
 // See all the available parameter options withe the `--help` flag. E.g. `./build/examples/openpose/openpose.bin --help`.
@@ -69,139 +69,7 @@ DEFINE_double(alpha_pose,               0.6,            "Blending factor (range 
 using namespace std;
 using namespace cv;
 
-void
-triangulateDLT( const Vec2d &xl, const Vec2d &xr,
-                const Matx34d &Pl, const Matx34d &Pr,
-                Vec3d &point3d )
-{
-    Matx44d design;
-    for (int i = 0; i < 4; ++i)
-    {
-        design(0,i) = xl(0) * Pl(2,i) - Pl(0,i);
-        design(1,i) = xl(1) * Pl(2,i) - Pl(1,i);
-        design(2,i) = xr(0) * Pr(2,i) - Pr(0,i);
-        design(3,i) = xr(1) * Pr(2,i) - Pr(1,i);
-    }
-
-    Vec4d XHomogeneous;
-    cv::SVD::solveZ(design, XHomogeneous);
-
-    homogeneousToEuclidean(XHomogeneous, point3d);
-}
-
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-
-/** @brief Triangulates the 3d position of 2d correspondences between n images, using the DLT
- * @param x Input vectors of 2d points (the inner vector is per image). Has to be 2xN
- * @param Ps Input vector with 3x4 projections matrices of each image.
- * @param X Output vector with computed 3d point.
- * Reference: it is the standard DLT; for derivation see appendix of Keir's thesis
- */
-void
-triangulateNViews(const Mat_<double> &x, const std::vector<Matx34d> &Ps, Vec3d &X)
-{
-    CV_Assert(x.rows == 2);
-    unsigned nviews = x.cols;
-    CV_Assert(nviews == Ps.size());
-
-    cv::Mat_<double> design = cv::Mat_<double>::zeros(3*nviews, 4 + nviews);
-    for (unsigned i=0; i < nviews; ++i) {
-        for(char jj=0; jj<3; ++jj)
-            for(char ii=0; ii<4; ++ii)
-                design(3*i+jj, ii) = -Ps[i](jj, ii);
-        design(3*i + 0, 4 + i) = x(0, i);
-        design(3*i + 1, 4 + i) = x(1, i);
-        design(3*i + 2, 4 + i) = 1.0;
-    }
-
-    Mat X_and_alphas;
-    cv::SVD::solveZ(design, X_and_alphas);
-    homogeneousToEuclidean(X_and_alphas.rowRange(0, 4), X);
-}
-
-
-void
-triangulatePoints(InputArrayOfArrays _points2d, InputArrayOfArrays _projection_matrices,
-                  OutputArray _points3d)
-{
-    // check
-    size_t nviews = (unsigned) _points2d.total();
-    CV_Assert(nviews >= 2 && nviews == _projection_matrices.total());
-
-    // inputs
-    size_t n_points;
-    std::vector<Mat_<double> > points2d(nviews);
-    std::vector<Matx34d> projection_matrices(nviews);
-    {
-        std::vector<Mat> points2d_tmp;
-        _points2d.getMatVector(points2d_tmp);
-        n_points = points2d_tmp[0].cols;
-
-        std::vector<Mat> projection_matrices_tmp;
-        _projection_matrices.getMatVector(projection_matrices_tmp);
-
-        // Make sure the dimensions are right
-        for(size_t i=0; i<nviews; ++i) {
-            CV_Assert(points2d_tmp[i].rows == 2 && points2d_tmp[i].cols == n_points);
-            if (points2d_tmp[i].type() == CV_64F)
-                points2d[i] = points2d_tmp[i];
-            else
-                points2d_tmp[i].convertTo(points2d[i], CV_64F);
-
-            CV_Assert(projection_matrices_tmp[i].rows == 3 && projection_matrices_tmp[i].cols == 4);
-            if (projection_matrices_tmp[i].type() == CV_64F)
-              projection_matrices[i] = projection_matrices_tmp[i];
-            else
-              projection_matrices_tmp[i].convertTo(projection_matrices[i], CV_64F);
-        }
-    }
-
-    // output
-    _points3d.create(3, n_points, CV_64F);
-    cv::Mat points3d = _points3d.getMat();
-
-    // Two view
-    if( nviews == 2 )
-    {
-        const Mat_<double> &xl = points2d[0], &xr = points2d[1];
-
-        const Matx34d & Pl = projection_matrices[0];    // left matrix projection
-        const Matx34d & Pr = projection_matrices[1];    // right matrix projection
-
-        // triangulate
-        for( unsigned i = 0; i < n_points; ++i )
-        {
-            Vec3d point3d;
-            triangulateDLT( Vec2d(xl(0,i), xl(1,i)), Vec2d(xr(0,i), xr(1,i)), Pl, Pr, point3d );
-            for(char j=0; j<3; ++j)
-                points3d.at<double>(j, i) = point3d[j];
-        }
-    }
-    else if( nviews > 2 )
-    {
-        // triangulate
-        for( unsigned i=0; i < n_points; ++i )
-        {
-            // build x matrix (one point per view)
-            Mat_<double> x( 2, nviews );
-            for( unsigned k=0; k < nviews; ++k )
-            {
-                points2d.at(k).col(i).copyTo( x.col(k) );
-            }
-
-            Vec3d point3d;
-            triangulateNViews( x, projection_matrices, point3d );
-            for(char j=0; j<3; ++j)
-                points3d.at<double>(j, i) = point3d[j];
-        }
-    }
-}
-
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
-////////////////////////////////////////////////////
+int undist_on = 1;
 
 //openposeを実行して骨格を描画したMatを返す
 cv::Mat execOp(cv::Mat inputImage,
@@ -318,15 +186,80 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
 
 int main(int argc, char *argv[])
 {
-    cout<<"a"<<endl;
+    //画像入力
     //cv::Mat colorImage = cv::imread("examples/media/goprosurfin.jpg");
+    
     //ビデオ入力獲得
-    cv::VideoCapture goproL("media/3WD.mp4");
-    cv::VideoCapture goproR("media/3WD.mp4");
-    cout<<"b"<<endl;
+    cv::VideoCapture camera1(argv[1]);
+    cv::VideoCapture camera2(argv[2]);
 
-    cv::Mat ColorPpL, ColorPpR;
-    std::vector<cv::Mat> Pp = {ColorPpL,ColorPpR};
+    cv::FileStorage inputfs1(argv[3], cv::FileStorage::READ);
+    if (!inputfs1.isOpened()){
+        std::cout << "File1 can not be opened." << std::endl;
+        return -1;
+    }
+    cv::FileStorage inputfs2(argv[4], cv::FileStorage::READ);
+    if (!inputfs2.isOpened()){
+        std::cout << "File2 can not be opened." << std::endl;
+        return -1;
+    }
+
+    //内部行列、歪みベクトル、回転ベクトル、並進ベクトル読み出し
+    cv::Mat intrinsic1, distortion1,  rvec1, translation1, intrinsic2, distortion2, rvec2, translation2;
+    inputfs1["intrinsic"] >> intrinsic1;
+    inputfs1["distortion"] >> distortion1;
+    inputfs1["rvec_undistorted"] >> rvec1;
+    inputfs1["tvec_undistorted"] >> translation1;
+    inputfs2["intrinsic"] >> intrinsic2;
+    inputfs2["distortion"] >> distortion2;
+    inputfs2["rvec_undistorted"] >> rvec2;
+    inputfs2["tvec_undistorted"] >> translation2;
+
+    // 回転ベクトルを回転行列に変換
+    cv::Mat rotation1, rotation2;
+    cv::Rodrigues(rvec1, rotation1);
+    cv::Rodrigues(rvec2, rotation2);
+
+    std::cout<<"rot1"<<rotation1<<std::endl;
+    std::cout<<"rot2"<<rotation2<<std::endl;
+    
+    //水平方向連結
+    cv::Mat externalMat1, externalMat2;
+    cv::hconcat(rotation1, translation1, externalMat1);
+    cv::hconcat(rotation2, translation2, externalMat2);
+
+    std::cout<<"externalMat1"<<externalMat1<<std::endl;
+    std::cout<<"externalMat2"<<externalMat2<<std::endl;
+
+    //透視投影行列計算
+    cv::Mat camera_matrix1 = intrinsic1 * externalMat1;
+    cv::Mat camera_matrix2 = intrinsic2 * externalMat2;
+
+    std::cout<<"camera_matrix1"<<camera_matrix1<<std::endl;
+    std::cout<<"camera_matrix2"<<camera_matrix2<<std::endl;
+
+    //カメラ行列用の内部行列読み込み
+    //cv::Mat camera_matrix1 = (cv::Mat_<float>(3,4) << 1099.790005, -57.86847051, -655.2182515, 209195.6733, 95.68579247, -941.6786317, -438.6950688, 221050.9332, 0.245138, -0.047646, -0.968317, 281.264361);
+	//cv::Mat camera_matrix2 = (cv::Mat_<float>(3,4) << 1534.967225, -145.4823979, -1340.646817, 1185054.773, -138.4710647, -1918.099455, -229.9186693, 356669.8307, -0.295114, -0.098627, -0.950358, 595.130511);
+
+	//カメラ行列のベクトル生成
+    std::vector<cv::Mat> Pp = {camera_matrix1,camera_matrix2};
+
+    // 歪みマップ行列を求める
+    cv::Mat new_camera_matrix1, mapx1, mapy1, new_camera_matrix2, mapx2, mapy2;
+    cv::Size video_size1(camera1.get(CV_CAP_PROP_FRAME_WIDTH), camera1.get(CV_CAP_PROP_FRAME_HEIGHT));
+    cv::Size video_size2(camera2.get(CV_CAP_PROP_FRAME_WIDTH), camera2.get(CV_CAP_PROP_FRAME_HEIGHT));
+    cv::initUndistortRectifyMap(intrinsic1, distortion1, cv::Mat(), new_camera_matrix1, video_size1, CV_32FC1, mapx1, mapy1);
+    cv::initUndistortRectifyMap(intrinsic2, distortion2, cv::Mat(), new_camera_matrix2, video_size2, CV_32FC1, mapx2, mapy2);    
+
+	//書き込み用のXMLファイルを開く
+	cv::FileStorage outputfs(argv[5], cv::FileStorage::WRITE);
+	if(!outputfs.isOpened()){
+		std::cout<<"File can not be opened." << std::endl;
+        return -1;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Initializing google logging (Caffe uses it for logging)
     google::InitGoogleLogging("openPoseTutorialPose1");
 
@@ -350,16 +283,14 @@ int main(int argc, char *argv[])
     // outputSize
     //規定値から変更。入力動画のサイズを読み取り、その画像における関節座標を取得する
     stringstream ss;
-    ss<<(int)goproL.get(CV_CAP_PROP_FRAME_WIDTH)<<"x"<<(int)goproL.get(CV_CAP_PROP_FRAME_HEIGHT)<<endl;
+    ss<<(int)camera1.get(CV_CAP_PROP_FRAME_WIDTH)<<"x"<<(int)camera1.get(CV_CAP_PROP_FRAME_HEIGHT)<<endl;
     const auto outputSize = op::flagsToPoint(ss.str());
-    cout<<"c"<<endl;
     // netInputSize
     const auto netInputSize = op::flagsToPoint(FLAGS_net_resolution, "656x368");
     // netOutputSize
     const auto netOutputSize = netInputSize;
     // poseModel
     const auto poseModel = op::flagsToPoseModel(FLAGS_model_pose);
-    
     // Check no contradictory flags enabled
     if (FLAGS_alpha_pose < 0. || FLAGS_alpha_pose > 1.)
         op::error("Alpha value for blending must be in the range [0,1].", __LINE__, __FUNCTION__, __FILE__);
@@ -380,14 +311,21 @@ int main(int argc, char *argv[])
     // Step 4 - Initialize resources on desired thread (in this case single thread, i.e. we init resources here)
     poseExtractorCaffe.initializationOnThread();
     poseRenderer.initializationOnThread();
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    int frameNum = std::min(goproL.get(CV_CAP_PROP_FRAME_COUNT), goproR.get(CV_CAP_PROP_FRAME_COUNT));
-    Mat goproLImg, goproRImg;
-    std::vector<std::vector<cv::Point2f>> bodyPoints2D;
-    for(int i = 0; i<frameNum;i++){
-        cout<<"d"<<endl;
-        goproL >> goproLImg;
-        goproR >> goproRImg;
+    int frameNum = std::min(camera1.get(CV_CAP_PROP_FRAME_COUNT), camera2.get(CV_CAP_PROP_FRAME_COUNT));
+    Mat camera1Img, camera2Img;
+    int i = 0;
+    for(; i<frameNum;i++){
+        // 動画から画像の読み出し
+        camera1 >> camera1Img;
+        camera2 >> camera2Img;
+
+        //歪み補正を行う
+        cv::Mat undistorted_image1, undistorted_image2;
+        cv::remap(camera1Img, undistorted_image1, mapx1, mapy1, INTER_LINEAR);
+        cv::remap(camera2Img, undistorted_image2, mapx2, mapy2, INTER_LINEAR);
+
         //ディレクトリにアクセス
         //Ex.("media/"")
         
@@ -404,12 +342,23 @@ int main(int argc, char *argv[])
                                     &opOutputToCvMat);
         */
         // openposeを実行して関節座標をベクトルで返す
-        cout<<"e"<<endl;
-        std::vector<cv::Point2f> goproLJointVec = getEstimated2DPoseVec(goproLImg,
+        /*
+        std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(camera1Img,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
-        std::vector<cv::Point2f> goproRJointVec = getEstimated2DPoseVec(goproRImg,
+
+        std::vector<cv::Point2f> camera2JointVec = getEstimated2DPoseVec(camera2Img,
+                                                                          &cvMatToOpInput,
+                                                                          &cvMatToOpOutput,
+                                                                          &poseExtractorCaffe);
+                                                                          */
+        std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(undistorted_image1,
+                                                                          &cvMatToOpInput,
+                                                                          &cvMatToOpOutput,
+                                                                          &poseExtractorCaffe);
+
+        std::vector<cv::Point2f> camera2JointVec = getEstimated2DPoseVec(undistorted_image2,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
@@ -421,26 +370,27 @@ int main(int argc, char *argv[])
                                                           &poseExtractorCaffe);
         */
 
-
-        cout<<"f"<<endl;
-
-        bodyPoints2D.push_back(goproLJointVec);
-        bodyPoints2D.push_back(goproRJointVec);
+        std::vector<std::vector<cv::Point2f>> bodyPoints2D;
+        bodyPoints2D.push_back(camera1JointVec);
+        bodyPoints2D.push_back(camera2JointVec);
 
         cv::Mat points4D, points3D;
-        std::vector<cv::Mat> _bodyPoints3D;;
-
-        
-        if(goproLJointVec.size()!=0 && goproRJointVec.size()!=0){
+        std::vector<cv::Mat> _bodyPoints3D;
+	
+	/*
+        if(camera1JointVec.size()!=0 && camera2JointVec.size()!=0){
             for(int i = 0; i<18 ;i++){
                 //cout<<"point["<<i<<"]"<<bodyPoints2DVec[i]<<endl;
-                cv::circle(goproLImg, goproLJointVec[i], 3, cv::Scalar(0,0,200), -1);
-                cv::circle(goproRImg, goproRJointVec[i], 3, cv::Scalar(0,0,200), -1);
+                cv::circle(camera1Img, camera1JointVec[i], 3, cv::Scalar(0,0,200), -1);
+                cv::circle(camera2Img, camera2JointVec[i], 3, cv::Scalar(0,0,200), -1);
                 //std::cout << "bodyPoints2DVec[" <<  i << "] : " << bodyPoints2DVec[i] << std::endl;
-
-                cv::triangulatePoints(ColorPpL,ColorPpR,cv::Mat(bodyPoints2D[0][i]),cv::Mat(bodyPoints2D[1][i]),points4D);
+            }
+        }
+        
+                //cv::triangulatePoints(camera_matrix1,camera_matrix2,cv::Mat(bodyPoints2D[0][i]),cv::Mat(bodyPoints2D[1][i]),points4D);
                 //std::vector<>
-                //cv::sfm::triangulatePoints();
+                cv::sfm::triangulatePoints(bodyPoints2D,Pp,points3d);
+                cv::sfm::triangulatePoints();
 
                 cv::convertPointsFromHomogeneous(points4D.reshape(4,1) ,points3D);
                 //cv::Point3f _bodyPoint(points3D.at<float>(0,0),points3D.at<float>(1,0),points3D.at<float>(2,0));
@@ -449,25 +399,90 @@ int main(int argc, char *argv[])
             }
         }
         */
-        
+        cv::Mat points1Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        cv::Mat points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        cout<<"f"<<endl;
+        for (int i=0; i < camera1JointVec.size(); i++) {
+            cv::Point2f myPoint1 = camera1JointVec.at(i);
+            cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
+            cv::hconcat(points1Mat, matPoint1, points1Mat);
+        }
+        for (int i=0; i < camera2JointVec.size(); i++) {
+            cv::Point2f myPoint2 = camera2JointVec.at(i);
+            cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
+            cv::hconcat(points2Mat, matPoint2, points2Mat);
+        }
+        cout<<"g"<<endl;
+
+        vector<cv::Mat> sfmPoints2d;
+        std::cout<<"points1Mat"<<points1Mat<<std::endl;
+        std::cout<<"points2Mat"<<points2Mat<<std::endl;
+        sfmPoints2d.push_back(points1Mat);
+        sfmPoints2d.push_back(points2Mat);
+
+        cv::Mat points3d;
+        // ステレオ視による三次元骨格再構成
+        cv::sfm::triangulatePoints(sfmPoints2d,Pp,points3d);
+        //std::cout<<points3d.size()<<std::endl;
+    	std::cout<<points3d<<std::endl;
+    	std::string frameCount = "frame" + std::to_string(i);
+    	outputfs << frameCount << points3d;
+
         //「Mat形式の関節位置のベクトル」のベクトルを取得
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
         //bodyPoints3D.push_back(_bodyPoints3D);
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
 
-        cout<<"g"<<endl;
-        cv::imshow("goproLImage",goproLImg);
-        cv::imshow("goproRImage",goproRImg);
-        cv::waitKey(1);
-        /*
-        if(int key = waitKey(113)){
-            return 1;
+	/*
+        cv::imshow("camera1Image",camera1Img);
+        cv::imshow("camera2Image",camera2Img);
+        for(int i = 0;i<18;i++){
+            for(int j=0;j<2;j++){
+                points3d.at<float>(i,j) = points3d.at<float>(i,j)/points3d.at<float>(18,j);
+            }
         }
-        */
+
+        std::vector<cv::viz::WLine> lines;
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(0,0),points3d.at<float>(0,1),points3d.at<float>(0,2)),Point3f(points3d.at<float>(1,0),points3d.at<float>(1,1),points3d.at<float>(1,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(0,0),points3d.at<float>(0,1),points3d.at<float>(0,2)),Point3f(points3d.at<float>(14,0),points3d.at<float>(14,1),points3d.at<float>(14,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(0,0),points3d.at<float>(0,1),points3d.at<float>(0,2)),Point3f(points3d.at<float>(15,0),points3d.at<float>(15,1),points3d.at<float>(15,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(1,0),points3d.at<float>(1,1),points3d.at<float>(1,2)),Point3f(points3d.at<float>(2,0),points3d.at<float>(2,1),points3d.at<float>(2,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(1,0),points3d.at<float>(1,1),points3d.at<float>(1,2)),Point3f(points3d.at<float>(5,0),points3d.at<float>(5,1),points3d.at<float>(5,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(1,0),points3d.at<float>(1,1),points3d.at<float>(1,2)),Point3f(points3d.at<float>(8,0),points3d.at<float>(8,1),points3d.at<float>(8,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(1,0),points3d.at<float>(1,1),points3d.at<float>(1,2)),Point3f(points3d.at<float>(11,0),points3d.at<float>(11,1),points3d.at<float>(11,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(2,0),points3d.at<float>(2,1),points3d.at<float>(2,2)),Point3f(points3d.at<float>(3,0),points3d.at<float>(3,1),points3d.at<float>(3,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(3,0),points3d.at<float>(3,1),points3d.at<float>(3,2)),Point3f(points3d.at<float>(4,0),points3d.at<float>(4,1),points3d.at<float>(4,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(5,0),points3d.at<float>(5,1),points3d.at<float>(5,2)),Point3f(points3d.at<float>(6,0),points3d.at<float>(6,1),points3d.at<float>(6,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(6,0),points3d.at<float>(6,1),points3d.at<float>(6,2)),Point3f(points3d.at<float>(7,0),points3d.at<float>(7,1),points3d.at<float>(7,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(8,0),points3d.at<float>(8,1),points3d.at<float>(8,2)),Point3f(points3d.at<float>(9,0),points3d.at<float>(9,1),points3d.at<float>(9,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(10,0),points3d.at<float>(10,1),points3d.at<float>(10,2)),Point3f(points3d.at<float>(9,0),points3d.at<float>(9,1),points3d.at<float>(9,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(12,0),points3d.at<float>(12,1),points3d.at<float>(12,2)),Point3f(points3d.at<float>(11,0),points3d.at<float>(11,1),points3d.at<float>(11,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(12,0),points3d.at<float>(12,1),points3d.at<float>(12,2)),Point3f(points3d.at<float>(13,0),points3d.at<float>(13,1),points3d.at<float>(13,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(14,0),points3d.at<float>(14,1),points3d.at<float>(14,2)),Point3f(points3d.at<float>(16,0),points3d.at<float>(16,1),points3d.at<float>(16,2)), cv::viz::Color::red()));
+        lines.push_back(cv::viz::WLine(Point3f(points3d.at<float>(15,0),points3d.at<float>(15,1),points3d.at<float>(15,2)),Point3f(points3d.at<float>(17,0),points3d.at<float>(17,1),points3d.at<float>(17,2)), cv::viz::Color::red()));
+
+        for(int i= 0;i<16;i++){
+            stringstream ss;
+            ss << i;
+            std::string istr = ss.str();
+            visualizer.showWidget("line"+istr, lines[i]);     
+        }
+        
+
+        visualizer.spin();
+        //cv::waitKey(1);
+	*/
+        
+    /*
+    if(int key = waitKey(113)){
+        return 1;
+    }
+    */
     }
     /*
     cv::Mat points3d;
-    triangulatePoints(bodyPoints2D,Pp,points3d);
+    cv::sfm::triangulatePoints(bodyPoints2D,Pp,points3d);
+    std::cout<<points3d<<std::endl;
     */
     /*
     cv::imshow("outputImage",colorImage);
@@ -476,6 +491,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     */
-
+    outputfs << frameNum << i;
+    outputfs.release();
     return 0;
 }
