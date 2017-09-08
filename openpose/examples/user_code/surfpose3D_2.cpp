@@ -218,7 +218,7 @@ std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vec
             }
             lack_frame_joint.push_back(lack_start_and_len);
         }
-
+        /*
         for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
             for(int lack_ptr=0; lack_ptr<lack_frame_joint[joint_ptr].size(); lack_ptr++){
                 int start = lack_frame_joint[joint_ptr][lack_ptr][0];
@@ -226,7 +226,7 @@ std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vec
                 //cout<<"start,len : " << start<<","<<length<<endl;
             }
         }
-
+        */
         /*
         cout<<"joint_num"<<lack_frame_joint.size()<<endl;
         for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
@@ -268,10 +268,10 @@ std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vec
                         //cout<<"joint_ptr"<<joint_ptr<<endl;
                         //cout<<"pre : "<<output_vector[i][camera_ptr][joint_ptr].x<<","<<output_vector[i][camera_ptr][joint_ptr].y<<endl;
                         //cout<<"joint,lack,length,start+i : "<<joint_ptr<<","<<lack_ptr<<","<<length<<","<<start+i<<endl;
-                        cout<<"startX, endX, x : "<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<output_vector[start+length][camera_ptr][joint_ptr].x<<","<<output_vector[start+i][camera_ptr][joint_ptr].x<<endl;
-                        output_vector[start+i][camera_ptr][joint_ptr].x = output_vector[start-1][camera_ptr][joint_ptr].x * (float)((length-i)/(length+1)) + bodyPoints2D[start+length][camera_ptr][joint_ptr].x * (float)((i+1)/(length+1));
-                        output_vector[start+i][camera_ptr][joint_ptr].y = output_vector[start-1][camera_ptr][joint_ptr].y * (float)((length-i)/(length+1)) + bodyPoints2D[start+length][camera_ptr][joint_ptr].y * (float)((i+1)/(length+1));
-                        cout<<"startX, endX, idearX, X : "<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<output_vector[start+length][camera_ptr][joint_ptr].x<<","<<output_vector[start-1][camera_ptr][joint_ptr].x * (float)((length-i)/(length+1)) + bodyPoints2D[start+length][camera_ptr][joint_ptr].x * (float)((i+1)/(length+1))<<","<<output_vector[start+i][camera_ptr][joint_ptr].x<<endl;
+                        //cout<<"startX, endX, x : "<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<output_vector[start+length][camera_ptr][joint_ptr].x<<","<<output_vector[start+i][camera_ptr][joint_ptr].x<<endl;
+                        output_vector[start+i][camera_ptr][joint_ptr].x = output_vector[start-1][camera_ptr][joint_ptr].x * ((float)(length-i))/(length+1) + bodyPoints2D[start+length][camera_ptr][joint_ptr].x * ((float)(i+1))/(length+1);
+                        output_vector[start+i][camera_ptr][joint_ptr].y = output_vector[start-1][camera_ptr][joint_ptr].y * ((float)(length-i))/(length+1) + bodyPoints2D[start+length][camera_ptr][joint_ptr].y * ((float)(i+1))/(length+1);
+                        //cout<<"startX, endX, idealX, X : "<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<output_vector[start+length][camera_ptr][joint_ptr].x<<","<<output_vector[start-1][camera_ptr][joint_ptr].x * ((float)(length-i))/(length+1) + bodyPoints2D[start+length][camera_ptr][joint_ptr].x * ((float)(i+1))/(length+1)<<","<<output_vector[start+i][camera_ptr][joint_ptr].x<<endl;
                         //cout<<"post : "<<output_vector[i][camera_ptr][joint_ptr].x<<","<<output_vector[i][camera_ptr][joint_ptr].y<<endl;
                         //cout<<"start-1"<<start-1<<endl;
                         //cout<<"start+length"<<start+length<<endl;
@@ -484,27 +484,6 @@ int main(int argc, char *argv[])
 
         //フレームに紐づいた名前
         std::string frameCount = "frame" + std::to_string(i);
-
-        ////////////////////////////////////////////////////////////////////////////
-
-        cv::Mat _points1Mat = (cv::Mat_<double>(2,1) << 1, 1);
-        cv::Mat _points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
-        for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
-            cv::Point2f myPoint1 = bodyPoints2D[i][0].at(joint_num_1);
-            cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
-            cv::hconcat(_points1Mat, matPoint1, _points1Mat);
-        }
-        for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
-            cv::Point2f myPoint2 = bodyPoints2D[i][1].at(joint_num_2);
-            cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
-            cv::hconcat(_points2Mat, matPoint2, _points2Mat);
-        }
-        cv::Mat _points1Mat_reshaped = _points1Mat(cv::Rect(1,0,18,2));
-        cv::Mat _points2Mat_reshaped = _points2Mat(cv::Rect(1,0,18,2));
-        _output_2d_fs1 << frameCount << _points1Mat_reshaped;
-        _output_2d_fs2 << frameCount << _points2Mat_reshaped;
-
-        /////////////////////////////////////////////////////////////////////////
 
         cv::Mat points1Mat = (cv::Mat_<double>(2,1) << 1, 1);
         cv::Mat points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
