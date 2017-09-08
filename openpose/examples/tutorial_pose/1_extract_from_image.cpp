@@ -115,7 +115,6 @@ int openPoseTutorialPose1()
     // ------------------------- SHOWING RESULT AND CLOSING -------------------------
     // Step 1 - Show results
     frameDisplayer.displayFrame(outputImage, 0); // Alternative: cv::imshow(outputImage) + cv::waitKey(0)
-    cv::imwrite("outputImage.jpg", outputImage);
     // Step 2 - Logging information message
     op::log("Example 1 successfully finished.", op::Priority::High);
     // Return successful message

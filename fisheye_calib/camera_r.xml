@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<intrinsic type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>3</cols>
+  <dt>d</dt>
+  <data>
+    8.6373272752549951e+02 0. 9.8841783077460036e+02 0.
+    8.7183605017775528e+02 5.4448123925099912e+02 0. 0. 1.</data></intrinsic>
+<distortion type_id="opencv-matrix">
+  <rows>4</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    9.8212483281363866e-02 -1.1912619952282359e-01
+    9.7860222825735546e-02 -3.5753941960790735e-03</data></distortion>
+ <!-- resumed -->
+
+<rvec_distorted type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    2.5430166068386981e-02 -2.8651842943023422e+00
+    -3.9521532608323184e-01</data></rvec_distorted>
+<tvec_distorted type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    5.6536666436948699e-02 -8.9082914267141391e-02
+    3.0096251594979651e-01</data></tvec_distorted>
+<rvec_undistorted type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    2.3847454549827514e-02 -2.8367301577372244e+00
+    -3.4214192448311981e-01</data></rvec_undistorted>
+<tvec_undistorted type_id="opencv-matrix">
+  <rows>3</rows>
+  <cols>1</cols>
+  <dt>d</dt>
+  <data>
+    6.3677251360915038e-02 -8.9863698757768229e-02
+    5.3088095341633634e-01</data></tvec_undistorted>
+</opencv_storage>
