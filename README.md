@@ -19,3 +19,7 @@ $ ./bin/fisheye_calib {image_directory2_path} {xml2_path}
 ##外部行列推定（同じフレームの画像を用いる）
 $  ./bin/estimate_external_matrix {image_directory1_path}/img1.jpg {xml1_path}
 $  ./bin/estimate_external_matrix {image_directory2_path}/img1.jpg {xml2_path}
+
+$ ./build/examples/user_code/surfpose3D_2.bin ./media/stand_pose1.MP4 ./media/stand_pose2.MP4 stand_camera1.xml stand_camera2.xml stand_camera_2d_pose1.xml stand_camera_2d_pose2.xml stand_camera_3d_pose.xml
+
+$ ./build/examples/user_code/viz3D.bin ./stand_camera_3d_pose.xml

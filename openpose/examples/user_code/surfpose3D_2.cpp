@@ -183,6 +183,107 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
     return bodyPoints2D;
 }
 
+std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D){
+    
+    std::vector<std::vector<std::vector<cv::Point2f>>> output_vector(bodyPoints2D.size());
+    std::copy(bodyPoints2D.begin(), bodyPoints2D.end(), output_vector.begin());
+
+    //cout<<"frame"<<bodyPoints2D.size()<<endl; //frame
+    //cout<<bodyPoints2D[0].size()<<endl; //camera
+    //cout<<bodyPoints2D[0][0].size()<<endl; //body
+    for(int camera_ptr=0; camera_ptr<bodyPoints2D[0].size(); camera_ptr++){
+
+        std::vector<std::vector<std::vector<int>>> lack_frame_joint; //lack_frame_joint[joint_num][lack_num] = {lack_frame_start, lack_frame_length}
+        
+        for(int joint_ptr=0; joint_ptr<bodyPoints2D[0][0].size(); joint_ptr++){
+            int frame_ptr=0;
+            std::vector<std::vector<int>> lack_start_and_len; //lack_frame[lack_num] = {lack_frame_start, lack_frame_length}
+            while(frame_ptr<bodyPoints2D.size()){
+            //for(int frame_ptr=0; frame_ptr<bodyPoints2D.size(); frame_ptr++){
+                if(bodyPoints2D[frame_ptr][camera_ptr][joint_ptr].x!=0){ //検出している
+                    frame_ptr++;
+                }else{
+                    int lack_frame_start = frame_ptr;
+                    int lack_frame_length = 0;
+                    while(bodyPoints2D[lack_frame_start+lack_frame_length][camera_ptr][joint_ptr].x==0){
+                        //if処理入れる。bodyPoints2Dのサイズを超えてアクセスする可能性あり
+                        lack_frame_length++;
+                        if(lack_frame_start+lack_frame_length==bodyPoints2D.size()){ //最終フレームに到達
+                            break;
+                        }
+                    }
+                    lack_start_and_len.push_back({lack_frame_start,lack_frame_length});
+                    frame_ptr += lack_frame_length;
+                }
+            }
+            lack_frame_joint.push_back(lack_start_and_len);
+        }
+
+        for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
+            for(int lack_ptr=0; lack_ptr<lack_frame_joint[joint_ptr].size(); lack_ptr++){
+                int start = lack_frame_joint[joint_ptr][lack_ptr][0];
+                int length = lack_frame_joint[joint_ptr][lack_ptr][1];
+                //cout<<"start,len : " << start<<","<<length<<endl;
+            }
+        }
+
+        /*
+        cout<<"joint_num"<<lack_frame_joint.size()<<endl;
+        for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
+            for(int lack_ptr=0; lack_ptr<lack_frame_joint[joint_ptr].size(); lack_ptr++){
+                int start = lack_frame_joint[joint_ptr][lack_ptr][0];
+                int length = lack_frame_joint[joint_ptr][lack_ptr][1];
+                for(int ptr=0;ptr<length;ptr++){
+                    cout<<"bodyPoints2D[frame:"<<start+ptr<<"][camera:"<<camera_ptr<<"][joint:"<<joint_ptr<<"] : ("<<bodyPoints2D[start+ptr][camera_ptr][joint_ptr].x<<","<<bodyPoints2D[start+ptr][camera_ptr][joint_ptr].y<<")"<<endl;
+                }
+            }
+        }
+        */
+        
+        for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
+            for(int lack_ptr=0; lack_ptr<lack_frame_joint[joint_ptr].size(); lack_ptr++){
+                int start = lack_frame_joint[joint_ptr][lack_ptr][0];
+                int length = lack_frame_joint[joint_ptr][lack_ptr][1];
+                if(start==0){ //0フレームから欠落していた場合
+                    for(int i=0; i<length; i++){
+                        //cout<<"start"<<endl;
+                        //cout<<"camera_ptr"<<camera_ptr<<endl;
+                        //cout<<"joint_ptr"<<joint_ptr<<endl;
+                        output_vector[start+i][camera_ptr][joint_ptr] = output_vector[start+length][camera_ptr][joint_ptr];
+                        //cout<<bodyPoints2D[lack_frame_joint[joint_ptr][lack_ptr][1]][camera_ptr][joint_ptr].x<<endl;
+                    }
+                }else if(start+length==bodyPoints2D.size()){ //最終フレームまで欠落していた場合
+                    for(int i=0; i<length; i++){
+                        //cout<<"end"<<endl;
+                        //cout<<"joint_ptr"<<joint_ptr<<endl;
+                        output_vector[start+i][camera_ptr][joint_ptr] = output_vector[start-1][camera_ptr][joint_ptr];
+                        //cout<<bodyPoints2D[lack_frame_joint[joint_ptr][lack_ptr][0]-1][camera_ptr][joint_ptr].x<<endl;
+                    }
+                }else{ //途中で欠落していた場合
+                    //cout<<"left x,y : "<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<output_vector[start-1][camera_ptr][joint_ptr].y<<endl;
+                    //cout<<"right x,y : "<<output_vector[start+length][camera_ptr][joint_ptr].x<<","<<output_vector[start+length][camera_ptr][joint_ptr].y<<endl;
+                    for(int i=0; i<length; i++){
+                        //線形補間
+                        //cout<<"mid"<<endl;
+                        //cout<<"joint_ptr"<<joint_ptr<<endl;
+                        //cout<<"pre : "<<output_vector[i][camera_ptr][joint_ptr].x<<","<<output_vector[i][camera_ptr][joint_ptr].y<<endl;
+                        //cout<<"joint,lack,length,start+i : "<<joint_ptr<<","<<lack_ptr<<","<<length<<","<<start+i<<endl;
+                        cout<<"startX, endX, x : "<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<output_vector[start+length][camera_ptr][joint_ptr].x<<","<<output_vector[start+i][camera_ptr][joint_ptr].x<<endl;
+                        output_vector[start+i][camera_ptr][joint_ptr].x = output_vector[start-1][camera_ptr][joint_ptr].x * (float)((length-i)/(length+1)) + bodyPoints2D[start+length][camera_ptr][joint_ptr].x * (float)((i+1)/(length+1));
+                        output_vector[start+i][camera_ptr][joint_ptr].y = output_vector[start-1][camera_ptr][joint_ptr].y * (float)((length-i)/(length+1)) + bodyPoints2D[start+length][camera_ptr][joint_ptr].y * (float)((i+1)/(length+1));
+                        cout<<"startX, endX, idearX, X : "<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<output_vector[start+length][camera_ptr][joint_ptr].x<<","<<output_vector[start-1][camera_ptr][joint_ptr].x * (float)((length-i)/(length+1)) + bodyPoints2D[start+length][camera_ptr][joint_ptr].x * (float)((i+1)/(length+1))<<","<<output_vector[start+i][camera_ptr][joint_ptr].x<<endl;
+                        //cout<<"post : "<<output_vector[i][camera_ptr][joint_ptr].x<<","<<output_vector[i][camera_ptr][joint_ptr].y<<endl;
+                        //cout<<"start-1"<<start-1<<endl;
+                        //cout<<"start+length"<<start+length<<endl;
+                        //cout<<output_vector[start-1][camera_ptr][joint_ptr].x<<","<<<<endl;
+                        //cout<<bodyPoints2D[start+length][camera_ptr][joint_ptr].x<<endl;
+                    }
+                }
+            }
+        }
+    }
+    return output_vector;
+}
 
 int main(int argc, char *argv[])
 {
@@ -220,23 +321,23 @@ int main(int argc, char *argv[])
     cv::Rodrigues(rvec1, rotation1);
     cv::Rodrigues(rvec2, rotation2);
 
-    std::cout<<"rot1"<<rotation1<<std::endl;
-    std::cout<<"rot2"<<rotation2<<std::endl;
+    //std::cout<<"rot1"<<rotation1<<std::endl;
+    //std::cout<<"rot2"<<rotation2<<std::endl;
     
     //水平方向連結
     cv::Mat externalMat1, externalMat2;
     cv::hconcat(rotation1, translation1, externalMat1);
     cv::hconcat(rotation2, translation2, externalMat2);
 
-    std::cout<<"externalMat1"<<externalMat1<<std::endl;
-    std::cout<<"externalMat2"<<externalMat2<<std::endl;
+    //std::cout<<"externalMat1"<<externalMat1<<std::endl;
+    //std::cout<<"externalMat2"<<externalMat2<<std::endl;
 
     //透視投影行列計算
     cv::Mat camera_matrix1 = intrinsic1 * externalMat1;
     cv::Mat camera_matrix2 = intrinsic2 * externalMat2;
 
-    std::cout<<"camera_matrix1"<<camera_matrix1<<std::endl;
-    std::cout<<"camera_matrix2"<<camera_matrix2<<std::endl;
+    //std::cout<<"camera_matrix1"<<camera_matrix1<<std::endl;
+    //std::cout<<"camera_matrix2"<<camera_matrix2<<std::endl;
 
     //カメラ行列用の内部行列読み込み
     //cv::Mat camera_matrix1 = (cv::Mat_<float>(3,4) << 1099.790005, -57.86847051, -655.2182515, 209195.6733, 95.68579247, -941.6786317, -438.6950688, 221050.9332, 0.245138, -0.047646, -0.968317, 281.264361);
@@ -253,6 +354,20 @@ int main(int argc, char *argv[])
     cv::initUndistortRectifyMap(intrinsic2, distortion2, cv::Mat(), new_camera_matrix2, video_size2, CV_32FC1, mapx2, mapy2);    
 
 	//書き込み用のXMLファイルを開く
+
+    /////////////////////////////////////////////////////////////////////////
+    cv::FileStorage _output_2d_fs1(argv[8], cv::FileStorage::WRITE);
+    if(!_output_2d_fs1.isOpened()){
+        std::cout<<"File can not be opened." << std::endl;
+        return -1;
+    }
+    cv::FileStorage _output_2d_fs2(argv[9], cv::FileStorage::WRITE);
+    if(!_output_2d_fs2.isOpened()){
+        std::cout<<"File can not be opened." << std::endl;
+        return -1;
+    }
+    //////////////////////////////////////////////////////////////////////////
+
     cv::FileStorage output_2d_fs1(argv[5], cv::FileStorage::WRITE);
     if(!output_2d_fs1.isOpened()){
         std::cout<<"File can not be opened." << std::endl;
@@ -324,9 +439,12 @@ int main(int argc, char *argv[])
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     int frameNum = std::min(camera1.get(CV_CAP_PROP_FRAME_COUNT), camera2.get(CV_CAP_PROP_FRAME_COUNT));
+    std::cout<<"frameNum : "<<frameNum<<std::endl;
     Mat camera1Img, camera2Img;
-    int i = 0;
-    for(; i<frameNum;i++){
+    std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D; //bodyPoints2D[frameNum][cameraNum][bodyPartsNum]
+    
+    //二次元関節座標の推定
+    for(int video_framePtr=0 ; video_framePtr<frameNum;video_framePtr++){
         // 動画から画像の読み出し
         camera1 >> camera1Img;
         camera2 >> camera2Img;
@@ -336,33 +454,6 @@ int main(int argc, char *argv[])
         cv::remap(camera1Img, undistorted_image1, mapx1, mapy1, INTER_LINEAR);
         cv::remap(camera2Img, undistorted_image2, mapx2, mapy2, INTER_LINEAR);
 
-        //ディレクトリにアクセス
-        //Ex.("media/"")
-        
-        // 動画のフレームを抜き出しcolorImage
-        // 各フレームに対しopenposeを実行して座標を描画してMatの形で獲得
-        
-        /*
-        // openposeを実行してcv::Matを返す
-        cv::Mat outputImg = execOp(colorImage,
-                                    &cvMatToOpInput,
-                                    &cvMatToOpOutput,
-                                    &poseExtractorCaffe,
-                                    &poseRenderer,
-                                    &opOutputToCvMat);
-        */
-        // openposeを実行して関節座標をベクトルで返す
-        /*
-        std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(camera1Img,
-                                                                          &cvMatToOpInput,
-                                                                          &cvMatToOpOutput,
-                                                                          &poseExtractorCaffe);
-
-        std::vector<cv::Point2f> camera2JointVec = getEstimated2DPoseVec(camera2Img,
-                                                                          &cvMatToOpInput,
-                                                                          &cvMatToOpOutput,
-                                                                          &poseExtractorCaffe);
-                                                                          */
         std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(undistorted_image1,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
@@ -372,85 +463,95 @@ int main(int argc, char *argv[])
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
-        /*
-        // openposeを実行して関節座標をMatで返す
-        cv::Mat bodyPoints2DMat = getEstimated2DPoseMat(colorImage,
-                                                          &cvMatToOpInput,
-                                                          &cvMatToOpOutput,
-                                                          &poseExtractorCaffe);
-        */
 
-        std::vector<std::vector<cv::Point2f>> bodyPoints2D;
-        bodyPoints2D.push_back(camera1JointVec);
-        bodyPoints2D.push_back(camera2JointVec);
+        std::vector<std::vector<cv::Point2f>> bodyPoints2D_frame;
+        bodyPoints2D_frame.push_back(camera1JointVec);
+        bodyPoints2D_frame.push_back(camera2JointVec);
 
+        bodyPoints2D.push_back(bodyPoints2D_frame);
+    }
+
+    cout<<"2d pose estimated!"<<endl;
+
+    //フレーム補間
+    std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D_bilateral_interpolated = bilateral_prediction(bodyPoints2D);
+
+    cout<<"interpolated!"<<endl;
+
+    for(int i=0; i<frameNum;i++){
         cv::Mat points4D, points3D;
         std::vector<cv::Mat> _bodyPoints3D;
-	
-	/*
-        if(camera1JointVec.size()!=0 && camera2JointVec.size()!=0){
-            for(int i = 0; i<18 ;i++){
-                //cout<<"point["<<i<<"]"<<bodyPoints2DVec[i]<<endl;
-                cv::circle(camera1Img, camera1JointVec[i], 3, cv::Scalar(0,0,200), -1);
-                cv::circle(camera2Img, camera2JointVec[i], 3, cv::Scalar(0,0,200), -1);
-                //std::cout << "bodyPoints2DVec[" <<  i << "] : " << bodyPoints2DVec[i] << std::endl;
-            }
-        }
-        
-                //cv::triangulatePoints(camera_matrix1,camera_matrix2,cv::Mat(bodyPoints2D[0][i]),cv::Mat(bodyPoints2D[1][i]),points4D);
-                //std::vector<>
-                cv::sfm::triangulatePoints(bodyPoints2D,Pp,points3d);
-                cv::sfm::triangulatePoints();
-
-                cv::convertPointsFromHomogeneous(points4D.reshape(4,1) ,points3D);
-                //cv::Point3f _bodyPoint(points3D.at<float>(0,0),points3D.at<float>(1,0),points3D.at<float>(2,0));
-                std::cout<<"points3D["<<i<<"] : "<<points3D<<std::endl;
-                _bodyPoints3D.push_back(points3D);
-            }
-        }
-        */
-        cv::Mat points1Mat; // = (cv::Mat_<double>(2,1) << 1, 1);
-        cv::Mat points2Mat; // = (cv::Mat_<double>(2,1) << 1, 1);
-        cout<<"f"<<endl;
-        for (int i=0; i < camera1JointVec.size(); i++) {
-            cv::Point2f myPoint1 = camera1JointVec.at(i);
-            cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
-            cv::hconcat(points1Mat, matPoint1, points1Mat);
-        }
-        for (int i=0; i < camera2JointVec.size(); i++) {
-            cv::Point2f myPoint2 = camera2JointVec.at(i);
-            cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
-            cv::hconcat(points2Mat, matPoint2, points2Mat);
-        }
-        cout<<"g"<<endl;
-
-        vector<cv::Mat> sfmPoints2d;
-        std::cout<<"points1Mat"<<points1Mat<<std::endl;
-        std::cout<<"points2Mat"<<points2Mat<<std::endl;
 
         //フレームに紐づいた名前
         std::string frameCount = "frame" + std::to_string(i);
+
+        ////////////////////////////////////////////////////////////////////////////
+
+        cv::Mat _points1Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        cv::Mat _points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
+            cv::Point2f myPoint1 = bodyPoints2D[i][0].at(joint_num_1);
+            cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
+            cv::hconcat(_points1Mat, matPoint1, _points1Mat);
+        }
+        for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
+            cv::Point2f myPoint2 = bodyPoints2D[i][1].at(joint_num_2);
+            cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
+            cv::hconcat(_points2Mat, matPoint2, _points2Mat);
+        }
+        cv::Mat _points1Mat_reshaped = _points1Mat(cv::Rect(1,0,18,2));
+        cv::Mat _points2Mat_reshaped = _points2Mat(cv::Rect(1,0,18,2));
+        _output_2d_fs1 << frameCount << _points1Mat_reshaped;
+        _output_2d_fs2 << frameCount << _points2Mat_reshaped;
+
+        /////////////////////////////////////////////////////////////////////////
+
+        cv::Mat points1Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        cv::Mat points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        //for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
+        for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
+            cv::Point2f myPoint1 = bodyPoints2D_bilateral_interpolated[i][0].at(joint_num_1);
+            //cv::Point2f myPoint1 = bodyPoints2D[i][0].at(joint_num_1);
+            //cv::Point2f myPoint1 = camera1JointVec.at(i);
+            cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
+            cv::hconcat(points1Mat, matPoint1, points1Mat);
+        }
+        //for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
+        for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
+            cv::Point2f myPoint2 = bodyPoints2D_bilateral_interpolated[i][1].at(joint_num_2);
+            //cv::Point2f myPoint2 = bodyPoints2D[i][1].at(joint_num_2);
+            //cv::Point2f myPoint2 = camera2JointVec.at(i);
+            cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
+            cv::hconcat(points2Mat, matPoint2, points2Mat);
+        }
+        cv::Mat points1Mat_reshaped = points1Mat(cv::Rect(1,0,18,2));
+        cv::Mat points2Mat_reshaped = points2Mat(cv::Rect(1,0,18,2));
+        output_2d_fs1 << frameCount << points1Mat_reshaped;
+        output_2d_fs2 << frameCount << points2Mat_reshaped;
+        
+        vector<cv::Mat> sfmPoints2d;
+        //std::cout<<"points1Mat"<<points1Mat<<std::endl;
+        //std::cout<<"points2Mat"<<points2Mat<<std::endl;
+
         //二次元関節座標をファイルに書き込み
-        output_2d_fs1 << frameCount << points1Mat;
-        output_2d_fs2 << frameCount << points2Mat;
         //二次元関節座標の行列をベクトル化
-        sfmPoints2d.push_back(points1Mat);
-        sfmPoints2d.push_back(points2Mat);
+        sfmPoints2d.push_back(points1Mat_reshaped);
+        sfmPoints2d.push_back(points2Mat_reshaped);
 
         cv::Mat points3d;
         // ステレオ視による三次元骨格再構成
         cv::sfm::triangulatePoints(sfmPoints2d,Pp,points3d);
         //std::cout<<points3d.size()<<std::endl;
-    	std::cout<<points3d<<std::endl;
+    	//std::cout<<points3d<<std::endl;
         //三次元関節座標を書き込み
     	output_3d_fs << frameCount << points3d;
-
+    	//std::cout<<"i"<<i<<std::endl;
         //「Mat形式の関節位置のベクトル」のベクトルを取得
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
         //bodyPoints3D.push_back(_bodyPoints3D);
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
 
-	/*
+        /*
         cv::imshow("camera1Image",camera1Img);
         cv::imshow("camera2Image",camera2Img);
         for(int i = 0;i<18;i++){
@@ -486,29 +587,20 @@ int main(int argc, char *argv[])
         }
         
 
-        visualizer.spin();
+        visualizer.spinOnce();
         //cv::waitKey(1);
-	*/
+        */
         
-    /*
-    if(int key = waitKey(113)){
-        return 1;
+        /*
+        if(int key = 'q){
+            return 1;
+        }
+        */
     }
-    */
-    }
-    /*
-    cv::Mat points3d;
-    cv::sfm::triangulatePoints(bodyPoints2D,Pp,points3d);
-    std::cout<<points3d<<std::endl;
-    */
-    /*
-    cv::imshow("outputImage",colorImage);
-    cv::waitKey(0);
-    if(int key = waitKey(113)){
-        return 1;
-    }
-    */
-    output_3d_fs << frameNum << i;
+    cout<<"3d pose estimated!"<<endl;
+    output_3d_fs << "frameNum" << frameNum;
+    output_2d_fs1.release();
+    output_2d_fs2.release();
     output_3d_fs.release();
     return 0;
 }

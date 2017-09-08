@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     	
     	// make vector of body joints Point3d
     	vector<Point3d> bodyJointVec;
-    	for(int col=1; col<19; col++){
+    	for(int col=0; col<18; col++){
     		Point3d tmp(bodyJoint.at<double>(0,col), bodyJoint.at<double>(1,col), bodyJoint.at<double>(2,col));
     		bodyJointVec.push_back(tmp);
     	}
@@ -60,8 +60,8 @@ int main(int argc, char* argv[])
 		vector<viz::WSphere> bodyJointSphere;
     	for(int i=0; i<bodyJointVec.size(); i++){
     		viz::Color color(255*i/bodyJointVec.size(), 255*i/bodyJointVec.size(), (255-(255*i/bodyJointVec.size())));
-    		viz::WSphere sphere(bodyJointVec[i], 2, 2, color);
-    		sphere.setRenderingProperty(viz::LINE_WIDTH, 2.0);
+    		viz::WSphere sphere(bodyJointVec[i], 0.01, 0.01, color);
+    		sphere.setRenderingProperty(viz::LINE_WIDTH, 0.1);
     		string jointName = "bodyJoint" + to_string(i);
     		myWindow.showWidget(jointName, sphere);
     	}

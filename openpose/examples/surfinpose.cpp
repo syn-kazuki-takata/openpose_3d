@@ -183,7 +183,6 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
     return bodyPoints2D;
 }
 
-
 int main(int argc, char *argv[])
 {
     //画像入力
@@ -324,8 +323,9 @@ int main(int argc, char *argv[])
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     int frameNum = std::min(camera1.get(CV_CAP_PROP_FRAME_COUNT), camera2.get(CV_CAP_PROP_FRAME_COUNT));
+    std::cout<<"frameNum"<<frameNum<<std::endl;
     Mat camera1Img, camera2Img;
-    int i = 0;
+    int i = 190;
     for(; i<frameNum;i++){
         // 動画から画像の読み出し
         camera1 >> camera1Img;
@@ -372,6 +372,7 @@ int main(int argc, char *argv[])
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
+
         /*
         // openposeを実行して関節座標をMatで返す
         cv::Mat bodyPoints2DMat = getEstimated2DPoseMat(colorImage,
@@ -409,9 +410,8 @@ int main(int argc, char *argv[])
             }
         }
         */
-        cv::Mat points1Mat; // = (cv::Mat_<double>(2,1) << 1, 1);
-        cv::Mat points2Mat; // = (cv::Mat_<double>(2,1) << 1, 1);
-        cout<<"f"<<endl;
+        cv::Mat points1Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        cv::Mat points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
         for (int i=0; i < camera1JointVec.size(); i++) {
             cv::Point2f myPoint1 = camera1JointVec.at(i);
             cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
@@ -422,29 +422,31 @@ int main(int argc, char *argv[])
             cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
             cv::hconcat(points2Mat, matPoint2, points2Mat);
         }
-        cout<<"g"<<endl;
+        cv::Mat points1Mat_reshaped = points1Mat(cv::Rect(1,0,18,2));
+        cv::Mat points2Mat_reshaped = points2Mat(cv::Rect(1,0,18,2));
 
         vector<cv::Mat> sfmPoints2d;
-        std::cout<<"points1Mat"<<points1Mat<<std::endl;
-        std::cout<<"points2Mat"<<points2Mat<<std::endl;
+        //std::cout<<"points1Mat"<<points1Mat<<std::endl;
+        //std::cout<<"points2Mat"<<points2Mat<<std::endl;
 
         //フレームに紐づいた名前
         std::string frameCount = "frame" + std::to_string(i);
         //二次元関節座標をファイルに書き込み
-        output_2d_fs1 << frameCount << points1Mat;
-        output_2d_fs2 << frameCount << points2Mat;
+        output_2d_fs1 << frameCount << points1Mat_reshaped;
+        output_2d_fs2 << frameCount << points2Mat_reshaped;
         //二次元関節座標の行列をベクトル化
-        sfmPoints2d.push_back(points1Mat);
-        sfmPoints2d.push_back(points2Mat);
+        sfmPoints2d.push_back(points1Mat_reshaped);
+        sfmPoints2d.push_back(points2Mat_reshaped);
+
 
         cv::Mat points3d;
         // ステレオ視による三次元骨格再構成
         cv::sfm::triangulatePoints(sfmPoints2d,Pp,points3d);
         //std::cout<<points3d.size()<<std::endl;
-    	std::cout<<points3d<<std::endl;
+    	//std::cout<<points3d<<std::endl;
         //三次元関節座標を書き込み
     	output_3d_fs << frameCount << points3d;
-
+    	//std::cout<<"i"<<i<<std::endl;
         //「Mat形式の関節位置のベクトル」のベクトルを取得
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
         //bodyPoints3D.push_back(_bodyPoints3D);
@@ -508,7 +510,9 @@ int main(int argc, char *argv[])
         return 1;
     }
     */
-    output_3d_fs << frameNum << i;
+    output_3d_fs << "frameNum" << i;
+    output_2d_fs1.release();
+    output_2d_fs2.release();
     output_3d_fs.release();
     return 0;
 }

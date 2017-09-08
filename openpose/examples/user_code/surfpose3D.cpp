@@ -183,7 +183,6 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
     return bodyPoints2D;
 }
 
-
 int main(int argc, char *argv[])
 {
     //画像入力
@@ -324,6 +323,7 @@ int main(int argc, char *argv[])
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     int frameNum = std::min(camera1.get(CV_CAP_PROP_FRAME_COUNT), camera2.get(CV_CAP_PROP_FRAME_COUNT));
+    std::cout<<"frameNum"<<frameNum<<std::endl;
     Mat camera1Img, camera2Img;
     int i = 0;
     for(; i<frameNum;i++){
@@ -336,33 +336,6 @@ int main(int argc, char *argv[])
         cv::remap(camera1Img, undistorted_image1, mapx1, mapy1, INTER_LINEAR);
         cv::remap(camera2Img, undistorted_image2, mapx2, mapy2, INTER_LINEAR);
 
-        //ディレクトリにアクセス
-        //Ex.("media/"")
-        
-        // 動画のフレームを抜き出しcolorImage
-        // 各フレームに対しopenposeを実行して座標を描画してMatの形で獲得
-        
-        /*
-        // openposeを実行してcv::Matを返す
-        cv::Mat outputImg = execOp(colorImage,
-                                    &cvMatToOpInput,
-                                    &cvMatToOpOutput,
-                                    &poseExtractorCaffe,
-                                    &poseRenderer,
-                                    &opOutputToCvMat);
-        */
-        // openposeを実行して関節座標をベクトルで返す
-        /*
-        std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(camera1Img,
-                                                                          &cvMatToOpInput,
-                                                                          &cvMatToOpOutput,
-                                                                          &poseExtractorCaffe);
-
-        std::vector<cv::Point2f> camera2JointVec = getEstimated2DPoseVec(camera2Img,
-                                                                          &cvMatToOpInput,
-                                                                          &cvMatToOpOutput,
-                                                                          &poseExtractorCaffe);
-                                                                          */
         std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(undistorted_image1,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
@@ -372,13 +345,6 @@ int main(int argc, char *argv[])
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
-        /*
-        // openposeを実行して関節座標をMatで返す
-        cv::Mat bodyPoints2DMat = getEstimated2DPoseMat(colorImage,
-                                                          &cvMatToOpInput,
-                                                          &cvMatToOpOutput,
-                                                          &poseExtractorCaffe);
-        */
 
         std::vector<std::vector<cv::Point2f>> bodyPoints2D;
         bodyPoints2D.push_back(camera1JointVec);
@@ -386,32 +352,9 @@ int main(int argc, char *argv[])
 
         cv::Mat points4D, points3D;
         std::vector<cv::Mat> _bodyPoints3D;
-	
-	/*
-        if(camera1JointVec.size()!=0 && camera2JointVec.size()!=0){
-            for(int i = 0; i<18 ;i++){
-                //cout<<"point["<<i<<"]"<<bodyPoints2DVec[i]<<endl;
-                cv::circle(camera1Img, camera1JointVec[i], 3, cv::Scalar(0,0,200), -1);
-                cv::circle(camera2Img, camera2JointVec[i], 3, cv::Scalar(0,0,200), -1);
-                //std::cout << "bodyPoints2DVec[" <<  i << "] : " << bodyPoints2DVec[i] << std::endl;
-            }
-        }
-        
-                //cv::triangulatePoints(camera_matrix1,camera_matrix2,cv::Mat(bodyPoints2D[0][i]),cv::Mat(bodyPoints2D[1][i]),points4D);
-                //std::vector<>
-                cv::sfm::triangulatePoints(bodyPoints2D,Pp,points3d);
-                cv::sfm::triangulatePoints();
 
-                cv::convertPointsFromHomogeneous(points4D.reshape(4,1) ,points3D);
-                //cv::Point3f _bodyPoint(points3D.at<float>(0,0),points3D.at<float>(1,0),points3D.at<float>(2,0));
-                std::cout<<"points3D["<<i<<"] : "<<points3D<<std::endl;
-                _bodyPoints3D.push_back(points3D);
-            }
-        }
-        */
-        cv::Mat points1Mat; // = (cv::Mat_<double>(2,1) << 1, 1);
-        cv::Mat points2Mat; // = (cv::Mat_<double>(2,1) << 1, 1);
-        cout<<"f"<<endl;
+        cv::Mat points1Mat = (cv::Mat_<double>(2,1) << 1, 1);
+        cv::Mat points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
         for (int i=0; i < camera1JointVec.size(); i++) {
             cv::Point2f myPoint1 = camera1JointVec.at(i);
             cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
@@ -422,35 +365,37 @@ int main(int argc, char *argv[])
             cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
             cv::hconcat(points2Mat, matPoint2, points2Mat);
         }
-        cout<<"g"<<endl;
+        cv::Mat points1Mat_reshaped = points1Mat(cv::Rect(1,0,18,2));
+        cv::Mat points2Mat_reshaped = points2Mat(cv::Rect(1,0,18,2));
 
         vector<cv::Mat> sfmPoints2d;
-        std::cout<<"points1Mat"<<points1Mat<<std::endl;
-        std::cout<<"points2Mat"<<points2Mat<<std::endl;
+        //std::cout<<"points1Mat"<<points1Mat<<std::endl;
+        //std::cout<<"points2Mat"<<points2Mat<<std::endl;
 
         //フレームに紐づいた名前
         std::string frameCount = "frame" + std::to_string(i);
         //二次元関節座標をファイルに書き込み
-        output_2d_fs1 << frameCount << points1Mat;
-        output_2d_fs2 << frameCount << points2Mat;
+        output_2d_fs1 << frameCount << points1Mat_reshaped;
+        output_2d_fs2 << frameCount << points2Mat_reshaped;
         //二次元関節座標の行列をベクトル化
-        sfmPoints2d.push_back(points1Mat);
-        sfmPoints2d.push_back(points2Mat);
+        sfmPoints2d.push_back(points1Mat_reshaped);
+        sfmPoints2d.push_back(points2Mat_reshaped);
+
 
         cv::Mat points3d;
         // ステレオ視による三次元骨格再構成
         cv::sfm::triangulatePoints(sfmPoints2d,Pp,points3d);
         //std::cout<<points3d.size()<<std::endl;
-    	std::cout<<points3d<<std::endl;
+    	//std::cout<<points3d<<std::endl;
         //三次元関節座標を書き込み
     	output_3d_fs << frameCount << points3d;
-
+    	//std::cout<<"i"<<i<<std::endl;
         //「Mat形式の関節位置のベクトル」のベクトルを取得
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
         //bodyPoints3D.push_back(_bodyPoints3D);
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
 
-	/*
+        /*
         cv::imshow("camera1Image",camera1Img);
         cv::imshow("camera2Image",camera2Img);
         for(int i = 0;i<18;i++){
@@ -486,29 +431,19 @@ int main(int argc, char *argv[])
         }
         
 
-        visualizer.spin();
+        visualizer.spinOnce();
         //cv::waitKey(1);
-	*/
+        */
         
-    /*
-    if(int key = waitKey(113)){
-        return 1;
+        /*
+        if(int key = 'q){
+            return 1;
+        }
+        */
     }
-    */
-    }
-    /*
-    cv::Mat points3d;
-    cv::sfm::triangulatePoints(bodyPoints2D,Pp,points3d);
-    std::cout<<points3d<<std::endl;
-    */
-    /*
-    cv::imshow("outputImage",colorImage);
-    cv::waitKey(0);
-    if(int key = waitKey(113)){
-        return 1;
-    }
-    */
-    output_3d_fs << frameNum << i;
+    output_3d_fs << "frameNum" << i;
+    output_2d_fs1.release();
+    output_2d_fs2.release();
     output_3d_fs.release();
     return 0;
 }
