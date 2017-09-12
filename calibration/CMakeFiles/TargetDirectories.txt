@@ -1,0 +1,8 @@
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/estimate_external_matrix.dir
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/rebuild_cache.dir
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/estimate_external_matrix_one_camera.dir
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/movie_capture.dir
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/calibration.dir
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/edit_cache.dir
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/video_convert_image.dir
+/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/calibration_app.dir
