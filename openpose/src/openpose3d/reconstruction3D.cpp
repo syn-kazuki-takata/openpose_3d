@@ -125,9 +125,9 @@ void reconstructArray(op::Array<float>& keypoints3D, const std::vector<op::Array
                 auto& scoreValue = keypoints3D[{0, indexesUsed[index], 3}];
                 if (std::isfinite(xyzPoints[index].x) && std::isfinite(xyzPoints[index].y) && std::isfinite(xyzPoints[index].z))
                 {
-                    xValue = xyzPoints[index].x;
-                    yValue = xyzPoints[index].y;
-                    zValue = xyzPoints[index].z;
+                    xValue = xyzPoints[index].x * 1000;
+                    yValue = xyzPoints[index].y * 1000;
+                    zValue = xyzPoints[index].z * 1000;
                     scoreValue = 1.f;
                     std::cout<<"(x,y,z,score) : "<<xValue<<","<<yValue<<","<<zValue<<","<<scoreValue<<std::endl;
                 }

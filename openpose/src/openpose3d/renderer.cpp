@@ -242,7 +242,6 @@ void renderFloor()
 void renderMain(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glLoadIdentity();
     //gluLookAt(0,0,0, 0, 0, 1, 0, -1, 0);
     gluLookAt(
@@ -254,7 +253,6 @@ void renderMain(void)
     glTranslatef(0, 0, gGViewDistance);
     glRotatef(-gMouseYRotate, 1.f, 0.f, 0.f);
     glRotatef(-gMouseXRotate, 0.f, 1.f, 0.f);
-
     glTranslatef(-gMouseXPan, gMouseYPan, -gMouseZPan);
 
     renderFloor();
@@ -267,7 +265,6 @@ void renderMain(void)
         renderHumanBody(gKeypoints3D.mRightHandKeypoints, op::HAND_PAIRS_RENDER, op::HAND_COLORS_RENDER, 0.5f);
     }
     lock.unlock();
-
     glutSwapBuffers();
 }
 
@@ -350,11 +347,14 @@ void WRender3D::workConsumer(const std::shared_ptr<std::vector<Datum3D>>& datums
 {
     try
     {
+        //op::log("render1");
         // Profiling speed
         const auto profilerKey = op::Profiler::timerInit(__LINE__, __FUNCTION__, __FILE__);
         // User's displaying/saving/other processing here
         // datum.cvOutputData: rendered frame with pose or heatmaps
         // datum.poseKeypoints: Array<float> with the estimated pose
+        //op::log("render2");
+
         if (datumsPtr != nullptr && !datumsPtr->empty())
         {
             cv::Mat cvMat = datumsPtr->at(0).cvOutputData.clone();
@@ -402,7 +402,6 @@ void WRender3D::visualizationThread()
     glutInitWindowPosition(200, 0);
     // glutSetOption(GLUT_MULTISAMPLE,8);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
-
     // create and set up a window
     glutCreateWindow(GUI_NAME.c_str());
     initGraphics();
@@ -412,6 +411,5 @@ void WRender3D::visualizationThread()
     glutIdleFunc(idleFunc);
 
     glutMainLoop();
-
     this->stop();
 }

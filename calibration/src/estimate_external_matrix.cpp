@@ -66,28 +66,39 @@ int main(int argc, char* argv[]) {
     const int chess_cols = 9;
     const double chess_size = 21.5 / 1000.0;
 
+    string videoStr = "video";
+    string cameraStr = "camera";
+    string inputStr = string(argv[1]);
     //カメラ、内部行列、歪みベクトルの初期化
-    int camera_value = stoi(argv[1]);
+    int camera_value = stoi(argv[2]);
     vector<VideoCapture> cameras(camera_value);
     vector<string> window_names(camera_value);
     vector<string> undistorted_window_names(camera_value);
     vector<Mat> intrinsic(camera_value);
     vector<Mat> distortion(camera_value);
     for(int i=0; i<camera_value; i++){
-        //cameras[i] = VideoCapture(stoi(argv[2+i]));
-        cameras[i] = VideoCapture(stoi(argv[2+(i*2)]));
-        if(!cameras[i].isOpened()){
-            //読み込みに失敗したときの処理
-            return -1;
+        if(inputStr == videoStr){
+            cameras[i] = VideoCapture(argv[3+(i*2)]);
+            if(!cameras[i].isOpened()){
+                //読み込みに失敗したときの処理
+                return -1;
+            }
+        }else{
+            //cameras[i] = VideoCapture(stoi(argv[2+i]));
+            cameras[i] = VideoCapture(stoi(argv[3+(i*2)]));
+            if(!cameras[i].isOpened()){
+                //読み込みに失敗したときの処理
+                return -1;
+            }
         }
-        FileStorage inputfs = FileStorage(argv[3+(i*2)], FileStorage::READ);
+        FileStorage inputfs = FileStorage(argv[4+(i*2)], FileStorage::READ);
         if (!inputfs.isOpened()){
             cout << "File can not be opened." << endl;
             return -1;
         }
         inputfs["intrinsic"] >> intrinsic[i];
         inputfs["distortion"] >> distortion[i];
-        inputfs.release();    
+        inputfs.release();
         window_names[i] = "camera_" + to_string(i);
         undistorted_window_names[i] = "undistorted_" + to_string(i);
     }
@@ -159,7 +170,7 @@ int main(int argc, char* argv[]) {
         cout << "--- rvec_undistorted ---\n" << rvec_undistorted[i] << endl;
         cout << "--- tvec_undistorted ---\n" << tvec_undistorted[i] << endl;
 
-        FileStorage outputfs(argv[3+(i*2)], FileStorage::APPEND);
+        FileStorage outputfs(argv[4+(i*2)], FileStorage::APPEND);
         if (!outputfs.isOpened()){
             cout << "File can not be opened." << endl;
             return -1;

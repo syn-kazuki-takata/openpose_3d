@@ -138,28 +138,21 @@ std::vector<cv::Point2d> estimate_2d::_getEstimated2DPoseVec(cv::Mat inputImage,
     // Step 1 - Read and load image, error if empty (possibly wrong path)
     //cv::Mat inputImage = op::loadImage(FLAGS_image_path, CV_LOAD_IMAGE_COLOR); // Alternative: cv::imread(FLAGS_image_path, CV_LOAD_IMAGE_COLOR);
     //cv::Mat inputImage = cv::imread(FLAGS_image_path, CV_LOAD_IMAGE_COLOR);
-    std::cout<<"4"<<std::endl;
     if(inputImage.empty())
         //op::error("Could not open or find the image: " + FLAGS_image_path, __LINE__, __FUNCTION__, __FILE__);
         std::cout<<"openpose error!"<<std::endl;
     // Step 2 - Format input image to OpenPose input and output formats
     op::Array<float> netInputArray;
     std::vector<float> scaleRatios;
-    std::cout<<"5"<<std::endl;
     std::tie(netInputArray, scaleRatios) = cvMatToOpInput.format(inputImage);
-    std::cout<<"6"<<std::endl;
     double scaleInputToOutput;
     op::Array<float> outputArray;
-    std::cout<<"7"<<std::endl;
     std::tie(scaleInputToOutput, outputArray) = cvMatToOpOutput.format(inputImage);
     // Step 3 - Estimate poseKeypoints
-    std::cout<<"8"<<std::endl;
     poseExtractorCaffe.forwardPass(netInputArray, {inputImage.cols, inputImage.rows}, scaleRatios);
-    std::cout<<"9"<<std::endl;
     const auto poseKeypoints = poseExtractorCaffe.getPoseKeypoints();
 
     std::vector<cv::Point2d> bodyPoints2D;
-    std::cout<<"10"<<std::endl;
     if(poseKeypoints.empty()!=1){
         for(int i = 0; i<18 ;i++){
             cv::Point2d _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
@@ -167,7 +160,6 @@ std::vector<cv::Point2d> estimate_2d::_getEstimated2DPoseVec(cv::Mat inputImage,
             //cout<<bodyPoints2D[i]<<endl;
         }
     }
-    std::cout<<"11"<<std::endl;
     return bodyPoints2D;
 }
 
@@ -181,16 +173,12 @@ void estimate_2d::get2DPose(cv::VideoCapture& camera,
                             std::vector<std::vector<cv::Point2d>>& bodyPoints){
     for(int frame_ptr=0; frame_ptr<frameNum; frame_ptr++){
         cv::Mat frame, undistorted_image;
-        std::cout<<"1"<<std::endl;
         camera >> frame;
-        std::cout<<"2"<<std::endl;
         cv::remap(frame, undistorted_image, mapx, mapy, INTER_LINEAR);
-        std::cout<<"3"<<std::endl;
         std::vector<cv::Point2d> joint_vec = _getEstimated2DPoseVec(undistorted_image,
                                                                     cvMatToOpInput,
                                                                     cvMatToOpOutput,
                                                                     poseExtractorCaffe);
-        std::cout<<"4"<<std::endl;
         bodyPoints.push_back(joint_vec);
     }
 }
@@ -225,12 +213,3 @@ cv::Mat estimate_2d::getEstimated2DPoseMat(cv::Mat inputImage,
     }
     return bodyPoints2D;
 }
-
-
-
-
-
-
-
-
-
