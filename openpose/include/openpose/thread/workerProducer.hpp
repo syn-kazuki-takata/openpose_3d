@@ -11,7 +11,7 @@ namespace op
     {
     public:
         virtual ~WorkerProducer();
-
+        
         inline void work(TDatums& tDatums)
         {
             tDatums = std::move(workProducer());

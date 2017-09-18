@@ -1,14 +1,3 @@
-//test2
-// ------------------------- OpenPose Library Tutorial - Pose - Example 1 - Extract from Image -------------------------
-// This first example shows the user how to:
-    // 1. Load an image (`filestream` module)
-    // 2. Extract the pose of that image (`pose` module)
-    // 3. Render the pose on a resized copy of the input image (`pose` module)
-    // 4. Display the rendered pose (`gui` module)
-// In addition to the previous OpenPose modules, we also need to use:
-    // 1. `core` module: for the Array<float> class that the `pose` module needs
-    // 2. `utilities` module: for the error & logging functions, i.e. op::error & op::log respectively
-
 // 3rdparty dependencies
 #include <gflags/gflags.h> // DEFINE_bool, DEFINE_int32, DEFINE_int64, DEFINE_uint64, DEFINE_double, DEFINE_string
 #include <glog/logging.h> // google::InitGoogleLogging
@@ -19,6 +8,9 @@
 #include <openpose/gui/headers.hpp>
 #include <openpose/pose/headers.hpp>
 #include <openpose/utilities/headers.hpp>
+#include <usr/estimate_2d_pose_from_image.hpp>
+#include <usr/prediction.hpp>
+#include <usr/3d_reconstruction.hpp>
 // Eigen
 #include <Eigen/Core>
 // OpenCV
@@ -26,15 +18,6 @@
 #include <opencv2/sfm.hpp>
 #include <opencv2/opencv.hpp>
 //#include <opencv2/viz/viz3d.hpp>
-//#include <opencv2/core/eigen.hpp>
-//#include <opencv2/sfm/triangulation.hpp>
-//#include <opencv2/sfm/projection.hpp>
-//#include <opencv2/sfm/triangulation.hpp>
-
-// See all the available parameter options withe the `--help` flag. E.g. `./build/examples/openpose/openpose.bin --help`.
-// Note: This command will show you flags for other unnecessary 3rdparty files. Check only the flags for the OpenPose
-// executable. E.g. for `openpose.bin`, look for `Flags from examples/openpose/openpose.cpp:`.
-// Debugging
 
 DEFINE_int32(logging_level,             3,              "The logging level. Integer in the range [0, 255]. 0 will output any log() message, while"
                                                         " 255 will not output any. Current OpenPose library messages are in the range 0-4: 1 for"
@@ -71,6 +54,7 @@ using namespace cv;
 
 int undist_on = 1;
 
+/*
 //openposeを実行して骨格を描画したMatを返す
 cv::Mat execOp(cv::Mat inputImage,
                 op::CvMatToOpInput *cvMatToOpInput,
@@ -100,9 +84,9 @@ cv::Mat execOp(cv::Mat inputImage,
     // Step 5 - OpenPose output format to cv::Mat
     cv::Mat outputImage = opOutputToCvMat->formatToCvMat(outputArray);
     
-    std::vector<cv::Point2f> bodyPoints2D;
+    std::vector<cv::Point2d> bodyPoints2D;
     for(int i = 0; i<18 ;i++){
-        cv::Point2f _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
+        cv::Point2d _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
         bodyPoints2D.push_back(_bodyPoint);
     }
     for(int i = 0; i<18 ;i++){
@@ -120,7 +104,7 @@ cv::Mat execOp(cv::Mat inputImage,
 }
 
 // openposeを実行して関節座標をベクトルで返す
-std::vector<cv::Point2f> getEstimated2DPoseVec(cv::Mat inputImage,
+std::vector<cv::Point2d> getEstimated2DPoseVec(cv::Mat inputImage,
                                                op::CvMatToOpInput *cvMatToOpInput,
                                                op::CvMatToOpOutput *cvMatToOpOutput,
                                                op::PoseExtractorCaffe *poseExtractorCaffe)
@@ -142,10 +126,10 @@ std::vector<cv::Point2f> getEstimated2DPoseVec(cv::Mat inputImage,
     poseExtractorCaffe->forwardPass(netInputArray, {inputImage.cols, inputImage.rows}, scaleRatios);
     const auto poseKeypoints = poseExtractorCaffe->getPoseKeypoints();
 
-    std::vector<cv::Point2f> bodyPoints2D;
+    std::vector<cv::Point2d> bodyPoints2D;
     if(poseKeypoints.empty()!=1){
         for(int i = 0; i<18 ;i++){
-            cv::Point2f _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
+            cv::Point2d _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
             bodyPoints2D.push_back(_bodyPoint);
             //cout<<bodyPoints2D[i]<<endl;
         }
@@ -183,9 +167,9 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
     return bodyPoints2D;
 }
 
-std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D){
+std::vector<std::vector<std::vector<cv::Point2d>>> bilateral_prediction(std::vector<std::vector<std::vector<cv::Point2d>>> bodyPoints2D){
     
-    std::vector<std::vector<std::vector<cv::Point2f>>> output_vector(bodyPoints2D.size());
+    std::vector<std::vector<std::vector<cv::Point2d>>> output_vector(bodyPoints2D.size());
     std::copy(bodyPoints2D.begin(), bodyPoints2D.end(), output_vector.begin());
 
     //cout<<"frame"<<bodyPoints2D.size()<<endl; //frame
@@ -218,27 +202,6 @@ std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vec
             }
             lack_frame_joint.push_back(lack_start_and_len);
         }
-        /*
-        for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
-            for(int lack_ptr=0; lack_ptr<lack_frame_joint[joint_ptr].size(); lack_ptr++){
-                int start = lack_frame_joint[joint_ptr][lack_ptr][0];
-                int length = lack_frame_joint[joint_ptr][lack_ptr][1];
-                //cout<<"start,len : " << start<<","<<length<<endl;
-            }
-        }
-        */
-        /*
-        cout<<"joint_num"<<lack_frame_joint.size()<<endl;
-        for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
-            for(int lack_ptr=0; lack_ptr<lack_frame_joint[joint_ptr].size(); lack_ptr++){
-                int start = lack_frame_joint[joint_ptr][lack_ptr][0];
-                int length = lack_frame_joint[joint_ptr][lack_ptr][1];
-                for(int ptr=0;ptr<length;ptr++){
-                    cout<<"bodyPoints2D[frame:"<<start+ptr<<"][camera:"<<camera_ptr<<"][joint:"<<joint_ptr<<"] : ("<<bodyPoints2D[start+ptr][camera_ptr][joint_ptr].x<<","<<bodyPoints2D[start+ptr][camera_ptr][joint_ptr].y<<")"<<endl;
-                }
-            }
-        }
-        */
         
         for(int joint_ptr=0; joint_ptr<lack_frame_joint.size(); joint_ptr++){
             for(int lack_ptr=0; lack_ptr<lack_frame_joint[joint_ptr].size(); lack_ptr++){
@@ -284,6 +247,7 @@ std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vec
     }
     return output_vector;
 }
+
 
 double calcReprojectionError(const cv::Mat& X, const std::vector<cv::Mat>& M, const std::vector<cv::Point2d>& pt2D)
 {
@@ -333,6 +297,7 @@ double triangulateWithOptimization(cv::Mat& X, const std::vector<cv::Mat>& matri
     // return change;
     return 0.;
 }
+*/
 
 int main(int argc, char *argv[])
 {
@@ -404,19 +369,6 @@ int main(int argc, char *argv[])
 
 	//書き込み用のXMLファイルを開く
 
-    /////////////////////////////////////////////////////////////////////////
-    cv::FileStorage _output_2d_fs1(argv[8], cv::FileStorage::WRITE);
-    if(!_output_2d_fs1.isOpened()){
-        std::cout<<"File can not be opened." << std::endl;
-        return -1;
-    }
-    cv::FileStorage _output_2d_fs2(argv[9], cv::FileStorage::WRITE);
-    if(!_output_2d_fs2.isOpened()){
-        std::cout<<"File can not be opened." << std::endl;
-        return -1;
-    }
-    //////////////////////////////////////////////////////////////////////////
-
     cv::FileStorage output_2d_fs1(argv[5], cv::FileStorage::WRITE);
     if(!output_2d_fs1.isOpened()){
         std::cout<<"File can not be opened." << std::endl;
@@ -430,6 +382,11 @@ int main(int argc, char *argv[])
 	cv::FileStorage output_3d_fs(argv[7], cv::FileStorage::WRITE);
 	if(!output_3d_fs.isOpened()){
 		std::cout<<"File can not be opened." << std::endl;
+        return -1;
+    }
+    cv::FileStorage _output_3d_fs(argv[8], cv::FileStorage::WRITE);
+    if(!_output_3d_fs.isOpened()){
+        std::cout<<"File can not be opened." << std::endl;
         return -1;
     }
 
@@ -490,7 +447,7 @@ int main(int argc, char *argv[])
     int frameNum = std::min(camera1.get(CV_CAP_PROP_FRAME_COUNT), camera2.get(CV_CAP_PROP_FRAME_COUNT));
     std::cout<<"frameNum : "<<frameNum<<std::endl;
     Mat camera1Img, camera2Img;
-    std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D; //bodyPoints2D[frameNum][cameraNum][bodyPartsNum]
+    std::vector<std::vector<std::vector<cv::Point2d>>> bodyPoints2D; //bodyPoints2D[frameNum][cameraNum][bodyPartsNum]
     
     //二次元関節座標の推定
     for(int video_framePtr=0 ; video_framePtr<frameNum;video_framePtr++){
@@ -503,17 +460,17 @@ int main(int argc, char *argv[])
         cv::remap(camera1Img, undistorted_image1, mapx1, mapy1, INTER_LINEAR);
         cv::remap(camera2Img, undistorted_image2, mapx2, mapy2, INTER_LINEAR);
 
-        std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(undistorted_image1,
+        std::vector<cv::Point2d> camera1JointVec = estimate_2d::getEstimated2DPoseVec(undistorted_image1,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
 
-        std::vector<cv::Point2f> camera2JointVec = getEstimated2DPoseVec(undistorted_image2,
+        std::vector<cv::Point2d> camera2JointVec = estimate_2d::getEstimated2DPoseVec(undistorted_image2,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
 
-        std::vector<std::vector<cv::Point2f>> bodyPoints2D_frame;
+        std::vector<std::vector<cv::Point2d>> bodyPoints2D_frame;
         bodyPoints2D_frame.push_back(camera1JointVec);
         bodyPoints2D_frame.push_back(camera2JointVec);
 
@@ -523,7 +480,8 @@ int main(int argc, char *argv[])
     cout<<"2d pose estimated!"<<endl;
 
     //フレーム補間
-    std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D_bilateral_interpolated = bilateral_prediction(bodyPoints2D);
+    //bodyPoints2D_bilateral_interpolated[frameNum][cameraNum][bodyPartsNum]
+    std::vector<std::vector<std::vector<cv::Point2d>>> bodyPoints2D_bilateral_interpolated = prediction::bilateral_prediction(bodyPoints2D);
 
     cout<<"interpolated!"<<endl;
 
@@ -538,17 +496,17 @@ int main(int argc, char *argv[])
         cv::Mat points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
         //for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
         for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
-            cv::Point2f myPoint1 = bodyPoints2D_bilateral_interpolated[i][0].at(joint_num_1);
-            //cv::Point2f myPoint1 = bodyPoints2D[i][0].at(joint_num_1);
-            //cv::Point2f myPoint1 = camera1JointVec.at(i);
+            cv::Point2d myPoint1 = bodyPoints2D_bilateral_interpolated[i][0].at(joint_num_1);
+            //cv::Point2d myPoint1 = bodyPoints2D[i][0].at(joint_num_1);
+            //cv::Point2d myPoint1 = camera1JointVec.at(i);
             cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
             cv::hconcat(points1Mat, matPoint1, points1Mat);
         }
         //for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
         for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
-            cv::Point2f myPoint2 = bodyPoints2D_bilateral_interpolated[i][1].at(joint_num_2);
-            //cv::Point2f myPoint2 = bodyPoints2D[i][1].at(joint_num_2);
-            //cv::Point2f myPoint2 = camera2JointVec.at(i);
+            cv::Point2d myPoint2 = bodyPoints2D_bilateral_interpolated[i][1].at(joint_num_2);
+            //cv::Point2d myPoint2 = bodyPoints2D[i][1].at(joint_num_2);
+            //cv::Point2d myPoint2 = camera2JointVec.at(i);
             cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
             cv::hconcat(points2Mat, matPoint2, points2Mat);
         }
@@ -566,13 +524,14 @@ int main(int argc, char *argv[])
         sfmPoints2d.push_back(points1Mat_reshaped);
         sfmPoints2d.push_back(points2Mat_reshaped);
 
-        cv::Mat points3d;
+        cv::Mat points3d, _points3d;
         // ステレオ視による三次元骨格再構成
         cv::sfm::triangulatePoints(sfmPoints2d,Pp,points3d);
         //std::cout<<points3d.size()<<std::endl;
     	//std::cout<<points3d<<std::endl;
         //三次元関節座標を書き込み
     	output_3d_fs << frameCount << points3d;
+        //_output_3d_fs << frameCount << _points3d;
     	//std::cout<<"i"<<i<<std::endl;
         //「Mat形式の関節位置のベクトル」のベクトルを取得
         //std::cout<<"bodyPoints3D"<<_bodyPoints3D<<std::endl;
@@ -627,6 +586,7 @@ int main(int argc, char *argv[])
     }
     cout<<"3d pose estimated!"<<endl;
     output_3d_fs << "frameNum" << frameNum;
+    _output_3d_fs << "frameNum" << frameNum;
     output_2d_fs1.release();
     output_2d_fs2.release();
     output_3d_fs.release();

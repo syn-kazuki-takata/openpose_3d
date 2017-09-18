@@ -214,6 +214,9 @@ CXXFLAGS += -Wfatal-errors
 COMMON_FLAGS += -std=c++11
 LINKFLAGS += -fopenmp
 
+# デバッグ時のコンパイルオプション
+#append!
+#CXXFLAGS += -g -pg -Wall
 
 ##############################
 # Configure build
@@ -386,6 +389,10 @@ endif
 # 		$(foreach library,$(LIBRARIES),-l$(library)) -Wl,-rpath=$(CAFFE_DIR)/lib
 LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir)) $(PKG_CONFIG) \
 		$(foreach library,$(LIBRARIES),-l$(library))
+
+#追加ライブラリ
+#append!
+LDFLAGS = -lglut -lGLU -lGL
 
 ##############################
 # Define build targets

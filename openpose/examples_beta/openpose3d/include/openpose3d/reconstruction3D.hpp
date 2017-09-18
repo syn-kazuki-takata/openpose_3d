@@ -11,9 +11,18 @@
 class WReconstruction3D : public op::Worker<std::shared_ptr<std::vector<Datum3D>>>
 {
 public:
-    void initializationOnThread() {}
+	WReconstruction3D(std::vector<cv::FileStorage> &_camerafs);
+
+	~WReconstruction3D();
+
+    void initializationOnThread();
 
     void work(std::shared_ptr<std::vector<Datum3D>>& datumsPtr);
+private:
+	std::vector<cv::FileStorage> camerafs;
+    std::vector<cv::Mat> intrinsics;
+    std::vector<cv::Mat> distortions;
+    std::vector<cv::Mat> camera_matrixs;
 };
 
 #endif // RECONSTRUCTION_3D_HPP

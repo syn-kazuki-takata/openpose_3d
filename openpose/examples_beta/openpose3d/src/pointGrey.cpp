@@ -1,6 +1,8 @@
 ﻿#include <chrono>
 #include <iostream>
 #include <thread>
+#include <opencv2/core.hpp>
+#include <opencv2/sfm.hpp>
 #include <opencv2/opencv.hpp>
 #include <openpose3d/cameraParameters.hpp>
 #include <openpose3d/pointGrey.hpp>

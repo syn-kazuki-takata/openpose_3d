@@ -138,7 +138,7 @@ DEFINE_string(write_heatmaps,           "",             "Directory to write heat
 DEFINE_string(write_heatmaps_format,    "png",          "File extension and format for `write_heatmaps`, analogous to `write_images_format`."
                                                         " Recommended `png` or any compressed and lossless format.");
 
-int openpose3d()
+int openpose3d(char* argv[])
 {
     // logging_level
     op::check(0 <= FLAGS_logging_level && FLAGS_logging_level <= 255, "Wrong logging_level value.", __LINE__, __FUNCTION__, __FILE__);
@@ -170,16 +170,34 @@ int openpose3d()
 
     // Initializing the user custom classes
     // Frames producer (e.g. video, webcam, ...)
-    auto wPointGrey = std::make_shared<WPointGrey>();
+    int camera_value = std::stoi(argv[1]);
+    //std::vector<cv::VideoCapture> cameras(camera_value);
+    std::vector<std::string> camera_path(camera_value);
+    std::vector<cv::FileStorage> camerafs(camera_value);
+    for(int i=0; i<camera_value; i++){
+        camera_path[i] = argv[2+(i*2)];
+        camerafs[i] = cv::FileStorage(argv[3+(i*2)], cv::FileStorage::READ);
+    }
+    /*
+    for(int i=0;i<200;i++){
+        cv::Mat frame0, frame1;
+        cameras[0] >> frame0;
+        cameras[1] >> frame1;
+        cv::imshow("camera0",frame0);
+        cv::imshow("camera1",frame1);
+        cv::waitKey(1);
+    }
+    */
+    auto wMultiCamera = std::make_shared<WMultiCamera>(camera_path, camerafs);
     // Processing
-    auto wReconstruction3D = std::make_shared<WReconstruction3D>();
+    auto wReconstruction3D = std::make_shared<WReconstruction3D>(camerafs);
     // GUI (Display)
     auto wRender3D = std::make_shared<WRender3D>();
 
     op::Wrapper<std::vector<Datum3D>> opWrapper;
     // Add custom input
     const auto workerInputOnNewThread = true;
-    opWrapper.setWorkerInput(wPointGrey, workerInputOnNewThread);
+    opWrapper.setWorkerInput(wMultiCamera, workerInputOnNewThread);
     // Add custom processing
     const auto workerProcessingOnNewThread = true;
     opWrapper.setWorkerPostProcessing(wReconstruction3D, workerProcessingOnNewThread);
@@ -194,14 +212,18 @@ int openpose3d()
                                                   (float)FLAGS_alpha_heatmap, FLAGS_part_to_show, FLAGS_model_folder,
                                                   heatMapTypes, heatMapScale, (float)FLAGS_render_threshold};
     // Face configuration (use op::WrapperStructFace{} to disable it)
+    /*
     const op::WrapperStructFace wrapperStructFace{FLAGS_face, faceNetInputSize, op::flagsToRenderMode(FLAGS_face_render, FLAGS_render_pose),
                                                   (float)FLAGS_face_alpha_pose, (float)FLAGS_face_alpha_heatmap, (float)FLAGS_face_render_threshold};
+
     // Hand configuration (use op::WrapperStructHand{} to disable it)
     const op::WrapperStructHand wrapperStructHand{FLAGS_hand, handNetInputSize, FLAGS_hand_scale_number, (float)FLAGS_hand_scale_range,
                                                   FLAGS_hand_tracking, op::flagsToRenderMode(FLAGS_hand_render, FLAGS_render_pose),
                                                   (float)FLAGS_hand_alpha_pose, (float)FLAGS_hand_alpha_heatmap, (float)FLAGS_hand_render_threshold};
+                                                  */
+    
     // Consumer (comment or use default argument to disable any output)
-    const bool displayGui = false;
+    const bool displayGui = true;
     const bool guiVerbose = true;
     const bool fullScreen = false;
     const op::WrapperStructOutput wrapperStructOutput{displayGui, guiVerbose, fullScreen, FLAGS_write_keypoint,
@@ -209,7 +231,8 @@ int openpose3d()
                                                       FLAGS_write_coco_json, FLAGS_write_images, FLAGS_write_images_format, FLAGS_write_video,
                                                       FLAGS_write_heatmaps, FLAGS_write_heatmaps_format};
     // Configure wrapper
-    opWrapper.configure(wrapperStructPose, wrapperStructFace, wrapperStructHand, op::WrapperStructInput{}, wrapperStructOutput);
+    //opWrapper.configure(wrapperStructPose, wrapperStructFace, wrapperStructHand, op::WrapperStructInput{}, wrapperStructOutput);
+    opWrapper.configure(wrapperStructPose, op::WrapperStructInput{}, wrapperStructOutput);
     // Set to single-thread running (e.g. for debugging purposes)
     // opWrapper.disableMultiThreading();
 
@@ -235,5 +258,5 @@ int main(int argc, char *argv[])
     gflags::ParseCommandLineFlags(&argc, &argv, true);
 
     // Running openpose3d
-    return openpose3d();
+    return openpose3d(argv);
 }

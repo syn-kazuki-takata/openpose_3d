@@ -100,9 +100,9 @@ cv::Mat execOp(cv::Mat inputImage,
     // Step 5 - OpenPose output format to cv::Mat
     cv::Mat outputImage = opOutputToCvMat->formatToCvMat(outputArray);
     
-    std::vector<cv::Point2f> bodyPoints2D;
+    std::vector<cv::Point2d> bodyPoints2D;
     for(int i = 0; i<18 ;i++){
-        cv::Point2f _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
+        cv::Point2d _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
         bodyPoints2D.push_back(_bodyPoint);
     }
     for(int i = 0; i<18 ;i++){
@@ -120,7 +120,7 @@ cv::Mat execOp(cv::Mat inputImage,
 }
 
 // openposeを実行して関節座標をベクトルで返す
-std::vector<cv::Point2f> getEstimated2DPoseVec(cv::Mat inputImage,
+std::vector<cv::Point2d> getEstimated2DPoseVec(cv::Mat inputImage,
                                                op::CvMatToOpInput *cvMatToOpInput,
                                                op::CvMatToOpOutput *cvMatToOpOutput,
                                                op::PoseExtractorCaffe *poseExtractorCaffe)
@@ -142,10 +142,10 @@ std::vector<cv::Point2f> getEstimated2DPoseVec(cv::Mat inputImage,
     poseExtractorCaffe->forwardPass(netInputArray, {inputImage.cols, inputImage.rows}, scaleRatios);
     const auto poseKeypoints = poseExtractorCaffe->getPoseKeypoints();
 
-    std::vector<cv::Point2f> bodyPoints2D;
+    std::vector<cv::Point2d> bodyPoints2D;
     if(poseKeypoints.empty()!=1){
         for(int i = 0; i<18 ;i++){
-            cv::Point2f _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
+            cv::Point2d _bodyPoint(poseKeypoints[3*i], poseKeypoints[3*i+1]);
             bodyPoints2D.push_back(_bodyPoint);
             //cout<<bodyPoints2D[i]<<endl;
         }
@@ -183,9 +183,9 @@ cv::Mat getEstimated2DPoseMat(cv::Mat inputImage,
     return bodyPoints2D;
 }
 
-std::vector<std::vector<std::vector<cv::Point2f>>> bilateral_prediction(std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D){
+std::vector<std::vector<std::vector<cv::Point2d>>> bilateral_prediction(std::vector<std::vector<std::vector<cv::Point2d>>> bodyPoints2D){
     
-    std::vector<std::vector<std::vector<cv::Point2f>>> output_vector(bodyPoints2D.size());
+    std::vector<std::vector<std::vector<cv::Point2d>>> output_vector(bodyPoints2D.size());
     std::copy(bodyPoints2D.begin(), bodyPoints2D.end(), output_vector.begin());
 
     //cout<<"frame"<<bodyPoints2D.size()<<endl; //frame
@@ -441,7 +441,7 @@ int main(int argc, char *argv[])
     int frameNum = std::min(camera1.get(CV_CAP_PROP_FRAME_COUNT), camera2.get(CV_CAP_PROP_FRAME_COUNT));
     std::cout<<"frameNum : "<<frameNum<<std::endl;
     Mat camera1Img, camera2Img;
-    std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D; //bodyPoints2D[frameNum][cameraNum][bodyPartsNum]
+    std::vector<std::vector<std::vector<cv::Point2d>>> bodyPoints2D; //bodyPoints2D[frameNum][cameraNum][bodyPartsNum]
     
     //二次元関節座標の推定
     for(int video_framePtr=0 ; video_framePtr<frameNum;video_framePtr++){
@@ -454,17 +454,17 @@ int main(int argc, char *argv[])
         cv::remap(camera1Img, undistorted_image1, mapx1, mapy1, INTER_LINEAR);
         cv::remap(camera2Img, undistorted_image2, mapx2, mapy2, INTER_LINEAR);
 
-        std::vector<cv::Point2f> camera1JointVec = getEstimated2DPoseVec(undistorted_image1,
+        std::vector<cv::Point2d> camera1JointVec = getEstimated2DPoseVec(undistorted_image1,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
 
-        std::vector<cv::Point2f> camera2JointVec = getEstimated2DPoseVec(undistorted_image2,
+        std::vector<cv::Point2d> camera2JointVec = getEstimated2DPoseVec(undistorted_image2,
                                                                           &cvMatToOpInput,
                                                                           &cvMatToOpOutput,
                                                                           &poseExtractorCaffe);
 
-        std::vector<std::vector<cv::Point2f>> bodyPoints2D_frame;
+        std::vector<std::vector<cv::Point2d>> bodyPoints2D_frame;
         bodyPoints2D_frame.push_back(camera1JointVec);
         bodyPoints2D_frame.push_back(camera2JointVec);
 
@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
     cout<<"2d pose estimated!"<<endl;
 
     //フレーム補間
-    std::vector<std::vector<std::vector<cv::Point2f>>> bodyPoints2D_bilateral_interpolated = bilateral_prediction(bodyPoints2D);
+    std::vector<std::vector<std::vector<cv::Point2d>>> bodyPoints2D_bilateral_interpolated = bilateral_prediction(bodyPoints2D);
 
     cout<<"interpolated!"<<endl;
 
@@ -489,17 +489,17 @@ int main(int argc, char *argv[])
         cv::Mat points2Mat = (cv::Mat_<double>(2,1) << 1, 1);
         //for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
         for (int joint_num_1=0; joint_num_1 < bodyPoints2D_bilateral_interpolated[i][0].size(); joint_num_1++) {
-            cv::Point2f myPoint1 = bodyPoints2D_bilateral_interpolated[i][0].at(joint_num_1);
-            //cv::Point2f myPoint1 = bodyPoints2D[i][0].at(joint_num_1);
-            //cv::Point2f myPoint1 = camera1JointVec.at(i);
+            cv::Point2d myPoint1 = bodyPoints2D_bilateral_interpolated[i][0].at(joint_num_1);
+            //cv::Poifnt2f myPoint1 = bodyPoints2D[i][0].at(joint_num_1);
+            //cv::Point2d myPoint1 = camera1JointVec.at(i);
             cv::Mat matPoint1 = (cv::Mat_<double>(2,1) << myPoint1.x, myPoint1.y);
             cv::hconcat(points1Mat, matPoint1, points1Mat);
         }
         //for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
         for (int joint_num_2=0; joint_num_2 < bodyPoints2D_bilateral_interpolated[i][1].size(); joint_num_2++) {
-            cv::Point2f myPoint2 = bodyPoints2D_bilateral_interpolated[i][1].at(joint_num_2);
-            //cv::Point2f myPoint2 = bodyPoints2D[i][1].at(joint_num_2);
-            //cv::Point2f myPoint2 = camera2JointVec.at(i);
+            cv::Point2d myPoint2 = bodyPoints2D_bilateral_interpolated[i][1].at(joint_num_2);
+            //cv::Point2d myPoint2 = bodyPoints2D[i][1].at(joint_num_2);
+            //cv::Point2d myPoint2 = camera2JointVec.at(i);
             cv::Mat matPoint2 = (cv::Mat_<double>(2,1) << myPoint2.x, myPoint2.y);
             cv::hconcat(points2Mat, matPoint2, points2Mat);
         }
