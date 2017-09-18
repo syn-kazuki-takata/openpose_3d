@@ -235,17 +235,17 @@ int openpose3d(char* argv[])
     opWrapper.configure(wrapperStructPose, op::WrapperStructInput{}, wrapperStructOutput);
     // Set to single-thread running (e.g. for debugging purposes)
     opWrapper.disableMultiThreading();
-
+    
     op::log("Starting thread(s)", op::Priority::Max);
     // Start, run & stop threads
     opWrapper.exec();  // It blocks this thread until all threads have finished
-
+    //op::log("finish openpose3d!");
     // Measuring total time
     const auto now = std::chrono::high_resolution_clock::now();
     const auto totalTimeSec = (double)std::chrono::duration_cast<std::chrono::nanoseconds>(now-timerBegin).count() * 1e-9;
     const auto message = "Real-time pose estimation demo successfully finished. Total time: " + std::to_string(totalTimeSec) + " seconds.";
     op::log(message, op::Priority::High);
-
+    
     return 0;
 }
 
