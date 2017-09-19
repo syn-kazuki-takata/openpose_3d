@@ -4,17 +4,16 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/takatakazuki/github/surfpose3d/calibration/src/estimate_external_matrix.cpp" "/Users/takatakazuki/github/surfpose3d/calibration/CMakeFiles/estimate_external_matrix.dir/src/estimate_external_matrix.cpp.o"
+  "/home/kaz/openpose_3d/calibration/src/estimate_external_matrix.cpp" "/home/kaz/openpose_3d/calibration/CMakeFiles/estimate_external_matrix.dir/src/estimate_external_matrix.cpp.o"
   )
-set(CMAKE_CXX_COMPILER_ID "Clang")
+set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "include"
   "/usr/local/include/eigen3"
-  "/usr/local/Cellar/opencv/3.3.0_3/include"
-  "/usr/local/Cellar/opencv/3.3.0_3/include/opencv"
   "/usr/local/include"
+  "/usr/local/include/opencv"
   )
 
 # Targets to which this target links.

@@ -390,9 +390,8 @@ endif
 LDFLAGS += $(foreach librarydir,$(LIBRARY_DIRS),-L$(librarydir)) $(PKG_CONFIG) \
 		$(foreach library,$(LIBRARIES),-l$(library))
 
-#追加ライブラリ
 #append!
-LDFLAGS = -lglut -lGLU -lGL
+LDFLAGS += -lglut -lGLU -lGL
 
 ##############################
 # Define build targets

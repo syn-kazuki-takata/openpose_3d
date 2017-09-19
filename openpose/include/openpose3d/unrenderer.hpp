@@ -1,5 +1,5 @@
-#ifndef OPENPOSE3D_RENDERER_HPP
-#define OPENPOSE3D_RENDERER_HPP
+#ifndef OPENPOSE3D_UNRENDERER_HPP
+#define OPENPOSE3D_UNRENDERER_HPP
 
 #include <thread>
 #include <vector>

@@ -38,7 +38,7 @@ void triangulation(cv::Mat& X, const std::vector<cv::Mat>& matrixEachCamera, con
 }
 
 // TODO: ask Hanbyul for the missing function: TriangulationOptimization
-void triangulation_and_3dreconstruction::triangulateWithOptimization(cv::Mat& X, const std::vector<cv::Mat>& matrixEachCamera, const std::vector<cv::Point2d>& pointOnEachCamera)
+void triangulation_and_3dreconstruction::triangulationWithOptimization(cv::Mat& X, const std::vector<cv::Mat>& matrixEachCamera, const std::vector<cv::Point2d>& pointOnEachCamera)
 {
     triangulation(X, matrixEachCamera, pointOnEachCamera);
 
