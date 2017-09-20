@@ -8,7 +8,17 @@
 
 /home/kaz/openpose_3d/calibration/src/movie_capture.cpp
 opencv2/opencv.hpp
-/home/kaz/openpose_3d/calibration/src/opencv2/opencv.hpp
+-
+string
+-
+thread
+-
+mutex
+-
+vector
+-
+iostream
+-
 
 /usr/local/include/opencv/cxcore.h
 opencv2/core/core_c.h

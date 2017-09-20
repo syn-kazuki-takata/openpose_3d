@@ -8,9 +8,11 @@
 //#include <openpose3d/cameraParameters.hpp>
 //#include <openpose3d/pointGrey.hpp>
 #include <openpose3d/multi_camera_producer.hpp>
+#include <fisheye/fisheye_calibration.hpp>
+#include <fisheye/fisheye.hpp>
 
 // This function acquires and displays images from each device.
-std::vector<cv::Mat> acquireImages(std::vector<cv::VideoCapture> &cameras, std::vector<cv::Mat> &intrinsics, std::vector<cv::Mat> &distortions)
+std::vector<cv::Mat> acquireImages(std::vector<cv::VideoCapture> &cameras, std::vector<cv::Mat> &intrinsics, std::vector<cv::Mat> &distortions, std::vector<cv::Mat> mapx, std::vector<cv::Mat> mapy)
 {
     try
     {
@@ -30,13 +32,19 @@ std::vector<cv::Mat> acquireImages(std::vector<cv::VideoCapture> &cameras, std::
         for(int i=0u; i<cameras.size(); i++){
             cv::Mat frame;
             cameras[i] >> frame;
+            //rview = cv::Mat(frame.size(), frame.type());
+            //std::cout<<"size"<<cameras[i].get(CV_CAP_PROP_FRAME_WIDTH)<<","<<cameras[i].get(CV_CAP_PROP_FRAME_HEIGHT)<<std::endl;
             cvMats.emplace_back();
+            cv::remap(frame, cvMats[i], mapx[i], mapy[i], cv::INTER_LINEAR);
+            //cvMats[i] = fisheye_calibration::undistort(intrinsics[i], distortions[i], frame);
+            /*
             cv::Mat new_intrinsic, mapx, mapy;
             cv::Size video_size = cv::Size(cameras[i].get(CV_CAP_PROP_FRAME_WIDTH),cameras[i].get(CV_CAP_PROP_FRAME_HEIGHT));
             cv::initUndistortRectifyMap(intrinsics[i], distortions[i], cv::Mat(), new_intrinsic, video_size, CV_32FC1, mapx, mapy);
             cv::remap(frame, cvMats[i], mapx, mapy, cv::INTER_LINEAR);
+            */
             //std::string window_name = "camera" + std::to_string(i);
-            //cv::imshow(window_name, frame);
+            //cv::imshow(window_name, cvMats[i]);
             //cv::waitKey(1);
             //cv::undistort(frame, cvMats[i], intrinsics[i], distortions[i]);
         }
@@ -144,11 +152,11 @@ std::vector<cv::Mat> acquireImages(std::vector<cv::VideoCapture> &cameras, std::
 	}
 }
 
-//WMultiCamera::WMultiCamera(std::vector<cv::VideoCapture> &_cameras, std::vector<cv::FileStorage> &_camerafs) :
-WMultiCamera::WMultiCamera(std::vector<std::string> &_camera_path, std::vector<cv::FileStorage> &_camerafs) :
+WMultiCamera::WMultiCamera(std::vector<cv::VideoCapture> &_cameras, std::vector<cv::FileStorage> &_camerafs) :
+//WMultiCamera::WMultiCamera(std::vector<std::string> &_camera_path, std::vector<cv::FileStorage> &_camerafs) :
     initialized{false},
-    //cameras{_cameras},
-    camera_path{_camera_path},
+    cameras{_cameras},
+    //camera_path{_camera_path},
     camerafs{_camerafs}
 {
     /*
@@ -180,10 +188,12 @@ void WMultiCamera::initializationOnThread()
     try
     {
         initialized = true;
+        /*
         for(int i=0; i<camera_path.size(); i++){
             cameras.emplace_back();
             cameras[i] = cv::VideoCapture(camera_path[i]);
         }
+        */
         for(int i=0; i<camerafs.size(); i++){
             intrinsics.emplace_back();
             camerafs[i]["intrinsic"] >> intrinsics[i];
@@ -199,6 +209,12 @@ void WMultiCamera::initializationOnThread()
             std::cout<<"intrinsic["<<i<<"] : "<<intrinsics[i]<<std::endl;
             std::cout<<"distortion["<<i<<"] : "<<distortions[i]<<std::endl;
             std::cout<<"camera_matrix["<<i<<"]"<<camera_matrixs[i]<<std::endl;
+            
+            cv::Mat newK;
+            mapx.emplace_back();
+            mapy.emplace_back();
+            cv::fisheye::estimateNewCameraMatrixForUndistortRectify(intrinsics[i], distortions[i], cv::Size(cameras[i].get(CV_CAP_PROP_FRAME_WIDTH), cameras[i].get(CV_CAP_PROP_FRAME_HEIGHT)), cv::Matx33d::eye(), newK, 1);
+            cv::fisheye::initUndistortRectifyMap(intrinsics[i], distortions[i], cv::Matx33d::eye(), newK, cv::Size(cameras[i].get(CV_CAP_PROP_FRAME_WIDTH), cameras[i].get(CV_CAP_PROP_FRAME_HEIGHT)), CV_16SC2, mapx[i], mapy[i]);
         }
         /*
         // Print application build information
@@ -392,7 +408,7 @@ std::shared_ptr<std::vector<Datum3D>> WMultiCamera::workProducer()
             cv::waitKey(1);
         }
         */
-        std::vector<cv::Mat> cvMats = acquireImages(cameras, intrinsics, distortions);
+        std::vector<cv::Mat> cvMats = acquireImages(cameras, intrinsics, distortions, mapx, mapy);
         // Images to userDatum
         auto datums3d = std::make_shared<std::vector<Datum3D>>(cvMats.size());
         for (auto i = 0u ; i < cvMats.size() ; i++){

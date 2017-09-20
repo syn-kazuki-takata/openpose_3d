@@ -170,14 +170,26 @@ int openpose3d(char* argv[])
 
     // Initializing the user custom classes
     // Frames producer (e.g. video, webcam, ...)
-    int camera_value = std::stoi(argv[1]);
-    //std::vector<cv::VideoCapture> cameras(camera_value);
-    std::vector<std::string> camera_path(camera_value);
+    std::string videoStr = "video";
+    std::string cameraStr = "camera";
+    std::string inputStr = std::string(argv[1]);
+    int camera_value = std::stoi(argv[2]);
+    std::vector<cv::VideoCapture> cameras;
+    //std::vector<std::string> camera_path(camera_value);
     std::vector<cv::FileStorage> camerafs(camera_value);
     for(int i=0; i<camera_value; i++){
-        camera_path[i] = argv[2+(i*2)];
-        camerafs[i] = cv::FileStorage(argv[3+(i*2)], cv::FileStorage::READ);
+        //camera_path[i] = argv[2+(i*2)];
+        if(inputStr == videoStr){
+            cameras.emplace_back(cv::VideoCapture(argv[6+(i*2)]));
+        }else{
+            cameras.emplace_back(cv::VideoCapture(std::stoi(argv[6+(i*2)])));
+        }
+        cameras[i].set(CV_CAP_PROP_FPS, std::stoi(argv[3]));
+        cameras[i].set(CV_CAP_PROP_FRAME_WIDTH, std::stoi(argv[4]));
+        cameras[i].set(CV_CAP_PROP_FRAME_HEIGHT, std::stoi(argv[5]));
+        camerafs[i] = cv::FileStorage(argv[7+(i*2)], cv::FileStorage::READ);
     }
+    std::cout<<"cameras.size ; "<<cameras.size()<<std::endl;
     /*
     for(int i=0;i<200;i++){
         cv::Mat frame0, frame1;
@@ -188,7 +200,7 @@ int openpose3d(char* argv[])
         cv::waitKey(1);
     }
     */
-    auto wMultiCamera = std::make_shared<WMultiCamera>(camera_path, camerafs);
+    auto wMultiCamera = std::make_shared<WMultiCamera>(cameras, camerafs);
     // Processing
     auto wReconstruction3D = std::make_shared<WReconstruction3D>(camerafs);
     // GUI (Display)

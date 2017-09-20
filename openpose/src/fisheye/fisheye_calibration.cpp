@@ -4,8 +4,8 @@
 #include <opencv2/opencv.hpp>
 #include <boost/filesystem.hpp>
 
-#include "fisheye_calibration.hpp"
-#include "fisheye.hpp"
+#include <fisheye/fisheye_calibration.hpp>
+#include <fisheye/fisheye.hpp>
 
 // reads images in a directory
 std::vector<cv::Mat> internal::read_images(const std::string& directory_path) {

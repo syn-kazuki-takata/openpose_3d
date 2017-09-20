@@ -60,8 +60,10 @@ namespace op
             if (tDatums != nullptr)
             {
                 // Check tDatums->size() == 1
+                /*
                 if (tDatums->size() > 1)
                     error("Only implemented for tDatums->size() == 1", __LINE__, __FUNCTION__, __FILE__);
+                    */
                 // Debugging log
                 dLog("", Priority::Low, __LINE__, __FUNCTION__, __FILE__);
                 // Profiling speed

@@ -28,9 +28,9 @@ int main(int argc, char* argv[]){
     VideoCapture camera;
     string window_name;
     if(inputStr == videoStr){
-        camera.open(argv[2]);
+        camera.open(argv[5]);
     }else if(inputStr == cameraStr){
-        int num = stoi(argv[2]);
+        int num = stoi(argv[5]);
         camera.open(num);
     }
     if (!camera.isOpened())
@@ -38,8 +38,12 @@ int main(int argc, char* argv[]){
         cerr << "Unable to connect to camera" << endl;
         return 1;
     }
+    camera.set(CV_CAP_PROP_FPS, stoi(argv[2]));
+    camera.set(CV_CAP_PROP_FRAME_WIDTH, stoi(argv[3]));
+    camera.set(CV_CAP_PROP_FRAME_HEIGHT, stoi(argv[4]));
 
-    window_name = "camera_" + string(argv[2]);
+    //std::cout<<"size:"<<camera.get(cv::CAP_PROP_FRAME_WIDTH)<<","<<camera.get(cv::CAP_PROP_FRAME_HEIGHT)<<std::endl;
+    window_name = "camera_" + string(argv[5]);
 	int frameNum = 50;
 	bool capture_switch = false;
 	bool _switch = false;
@@ -91,7 +95,7 @@ int main(int argc, char* argv[]){
 	intrinsic = tmp[0];
 	distortion = tmp[1];
 
-	string output_file_name = argv[3];
+	string output_file_name = argv[6];
 	FileStorage outputfs(output_file_name, FileStorage::WRITE);
     outputfs << "intrinsic" << intrinsic;
     outputfs << "distortion" << distortion;

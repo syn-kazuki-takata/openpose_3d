@@ -62,9 +62,9 @@ Mat undistort(const Mat& K, const Mat& D, const Mat& frame) {
 
 int main(int argc, char* argv[]) {
 	// chessboard parameters
-    const int chess_rows = 6;
-    const int chess_cols = 9;
-    const double chess_size = 21.5 / 1000.0;
+    const int chess_rows = 3;
+    const int chess_cols = 4;
+    const double chess_size = 204.0 / 1000.0;
 
     string videoStr = "video";
     string cameraStr = "camera";
@@ -78,20 +78,23 @@ int main(int argc, char* argv[]) {
     vector<Mat> distortion(camera_value);
     for(int i=0; i<camera_value; i++){
         if(inputStr == videoStr){
-            cameras[i] = VideoCapture(argv[3+(i*2)]);
+            cameras[i] = VideoCapture(argv[6+(i*2)]);
             if(!cameras[i].isOpened()){
                 //読み込みに失敗したときの処理
                 return -1;
             }
         }else{
             //cameras[i] = VideoCapture(stoi(argv[2+i]));
-            cameras[i] = VideoCapture(stoi(argv[3+(i*2)]));
+            cameras[i] = VideoCapture(stoi(argv[6+(i*2)]));
             if(!cameras[i].isOpened()){
                 //読み込みに失敗したときの処理
                 return -1;
             }
         }
-        FileStorage inputfs = FileStorage(argv[4+(i*2)], FileStorage::READ);
+        cameras[i].set(CV_CAP_PROP_FPS, stoi(argv[3]));
+        cameras[i].set(CV_CAP_PROP_FRAME_WIDTH, stoi(argv[4]));
+        cameras[i].set(CV_CAP_PROP_FRAME_HEIGHT, stoi(argv[5]));
+        FileStorage inputfs = FileStorage(argv[7+(i*2)], FileStorage::READ);
         if (!inputfs.isOpened()){
             cout << "File can not be opened." << endl;
             return -1;
@@ -170,7 +173,7 @@ int main(int argc, char* argv[]) {
         cout << "--- rvec_undistorted ---\n" << rvec_undistorted[i] << endl;
         cout << "--- tvec_undistorted ---\n" << tvec_undistorted[i] << endl;
 
-        FileStorage outputfs(argv[4+(i*2)], FileStorage::APPEND);
+        FileStorage outputfs(argv[7+(i*2)], FileStorage::APPEND);
         if (!outputfs.isOpened()){
             cout << "File can not be opened." << endl;
             return -1;

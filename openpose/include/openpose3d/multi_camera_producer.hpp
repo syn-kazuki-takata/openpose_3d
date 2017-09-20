@@ -19,8 +19,8 @@ class WMultiCamera : public op::WorkerProducer<std::shared_ptr<std::vector<Datum
 {
 public:
 	
-    //WMultiCamera(std::vector<cv::VideoCapture> &_cameras, std::vector<cv::FileStorage> &_camerafs);
-    WMultiCamera(std::vector<std::string> &_camera_path, std::vector<cv::FileStorage> &_camerafs);
+    WMultiCamera(std::vector<cv::VideoCapture> &_cameras, std::vector<cv::FileStorage> &_camerafs);
+    //WMultiCamera(std::vector<std::string> &_camera_path, std::vector<cv::FileStorage> &_camerafs);
     
     ~WMultiCamera();
     
@@ -31,11 +31,13 @@ public:
 private:
     bool initialized;
     std::vector<cv::VideoCapture> cameras;
-    std::vector<std::string> camera_path;
+    //std::vector<std::string> camera_path;
     std::vector<cv::FileStorage> camerafs;
     std::vector<cv::Mat> intrinsics;
     std::vector<cv::Mat> distortions;
     std::vector<cv::Mat> camera_matrixs;
+    std::vector<cv::Mat> mapx;
+    std::vector<cv::Mat> mapy;
 };
 
 #endif // OPENPOSE3D_POINT_GREY_HPP
