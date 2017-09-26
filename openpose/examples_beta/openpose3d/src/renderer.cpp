@@ -341,7 +341,7 @@ WRender3D::WRender3D(const op::PoseModel poseModel)
     // Update sPoseModel
     sPoseModel = poseModel;
     // Init display
-    cv::imshow(GUI_NAME, cv::Mat{ 500, 500, CV_8UC3, cv::Scalar{ 0,0,0 } });
+    cv::imshow(GUI_NAME, cv::Mat( 500, 500, CV_8UC3, cv::Scalar{ 0,0,0 } ));
     //Run OpenGL
     mRenderThread = std::thread{ &WRender3D::visualizationThread, this };
 }
@@ -361,10 +361,9 @@ void WRender3D::workConsumer(const std::shared_ptr<std::vector<Datum3D>>& datums
             for (auto i = 1u; i < datumsPtr->size(); i++)
                 cv::hconcat(cvMat, datumsPtr->at(i).cvOutputData, cvMat);
             // while (cvMat.cols > 1500 || cvMat.rows > 1500)
-            while (cvMat.cols > 1920 || cvMat.rows > 1920){
+            while (cvMat.cols > 1920 || cvMat.rows > 1920)
                 // while (cvMat.rows > 3500)
                 cv::pyrDown(cvMat, cvMat);
-            }
             // Display all views
             cv::imshow(GUI_NAME, cvMat);
             cv::resizeWindow(GUI_NAME, cvMat.cols, cvMat.rows);

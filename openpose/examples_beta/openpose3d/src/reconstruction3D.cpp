@@ -1,7 +1,6 @@
 ﻿#include <opencv2/opencv.hpp>
-//#include <openpose3d/cameraParameters.hpp>
-//#include <openpose3d/pointGrey.hpp>
-#include <openpose3d/multi_camera_producer.hpp>
+#include <openpose3d/cameraParameters.hpp>
+#include <openpose3d/pointGrey.hpp>
 #include <openpose3d/reconstruction3D.hpp>
 
 double calcReprojectionError(const cv::Mat& X, const std::vector<cv::Mat>& M, const std::vector<cv::Point2d>& pt2D)
@@ -21,13 +20,8 @@ double calcReprojectionError(const cv::Mat& X, const std::vector<cv::Mat>& M, co
 void triangulate(cv::Mat& X, const std::vector<cv::Mat>& matrixEachCamera, const std::vector<cv::Point2d>& pointOnEachCamera)
 {
     // Security checks
-    if (matrixEachCamera.empty())
-        op::error("numberCameras.empty()", __LINE__, __FUNCTION__, __FILE__);
-    if (matrixEachCamera.size() != pointOnEachCamera.size()){
-        std::cout<<"matrixEachCamera_size : "<<matrixEachCamera.size()<<std::endl;
-        std::cout<<"pointOnEachCamera_size : "<<pointOnEachCamera.size()<<std::endl;
-        op::error("numberCameras.size() != pointOnEachCamera.size()", __LINE__, __FUNCTION__, __FILE__);
-    }
+    if (matrixEachCamera.empty() || matrixEachCamera.size() != pointOnEachCamera.size())
+        op::error("numberCameras.empty() || numberCameras.size() != pointOnEachCamera.size()", __LINE__, __FUNCTION__, __FILE__);
     // Create and fill A
     const auto numberCameras = (int)matrixEachCamera.size();
     cv::Mat A = cv::Mat::zeros(numberCameras*2, 4, CV_64F);
@@ -58,7 +52,7 @@ double triangulateWithOptimization(cv::Mat& X, const std::vector<cv::Mat>& matri
     return 0.;
 }
 
-void reconstructArray(op::Array<float>& keypoints3D, const std::vector<op::Array<float>>& keypointsVector, std::vector<cv::Mat> camera_matrixs)
+void reconstructArray(op::Array<float>& keypoints3D, const std::vector<op::Array<float>>& keypointsVector)
 {
     // Get number body parts
     auto detectionMissed = false;
@@ -107,14 +101,14 @@ void reconstructArray(op::Array<float>& keypoints3D, const std::vector<op::Array
             for (auto i = 0u; i < xyPoints.size(); i++)
             {
                 cv::Mat X;
-                triangulateWithOptimization(X, camera_matrixs, xyPoints[i]);
+                triangulateWithOptimization(X, M_EACH_CAMERA, xyPoints[i]);
                 xyzPoints[i] = cv::Point3d{ X.at<double>(0), X.at<double>(1), X.at<double>(2) };
             }
 
             // 3D points to pose
             // OpenCV alternative:
             // // http://docs.opencv.org/2.4/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html#triangulatepoints
-            // cv::Mat reconstructedcv::Points{4, firstcv::Points.size(), CV_64F};
+            // cv::Mat reconstructedPoints{4, firstcv::Points.size(), CV_64F};
             // cv::triangulatecv::Points(cv::Mat::eye(3,4, CV_64F), M_3_1, firstcv::Points, secondcv::Points, reconstructedcv::Points);
             keypoints3D = op::Array<float>{ { 1, numberBodyParts, 4 }, 0 };
             for (auto index = 0u; index < indexesUsed.size(); index++)
@@ -129,53 +123,11 @@ void reconstructArray(op::Array<float>& keypoints3D, const std::vector<op::Array
                     yValue = xyzPoints[index].y;
                     zValue = xyzPoints[index].z;
                     scoreValue = 1.f;
-                    std::cout<<"(x,y,z,score) : "<<xValue<<","<<yValue<<","<<zValue<<","<<scoreValue<<std::endl;
                 }
             }
         }
     }
 }
-
-WReconstruction3D::WReconstruction3D(std::vector<cv::FileStorage> &_camerafs) :
-    camerafs{_camerafs}
-{}
-
-WReconstruction3D::~WReconstruction3D()
-{
-    try
-    {
-        op::log("Done! Exitting...", op::Priority::High);
-    }
-    catch (const std::exception& e)
-    {
-        op::error(e.what(), __LINE__, __FUNCTION__, __FILE__);
-    }
-}
-
-void WReconstruction3D::initializationOnThread()
-{
-    try
-    {
-        for(int i=0; i<camerafs.size(); i++){
-            intrinsics.emplace_back();
-            camerafs[i]["intrinsic"] >> intrinsics[i];
-            distortions.emplace_back();
-            camerafs[i]["distortion"] >> distortions[i];
-            cv::Mat rvec, rotation, translation, external;
-            camerafs[i]["rvec_undistorted"] >> rvec;
-            cv::Rodrigues(rvec, rotation);
-            camerafs[i]["tvec_undistorted"] >> translation;
-            cv::hconcat(rotation, translation, external);
-            camera_matrixs.emplace_back();
-            camera_matrixs[i] = intrinsics[i] * external;
-        }
-    }
-    catch (const std::exception& e)
-    {
-        op::error(e.what(), __LINE__, __FUNCTION__, __FILE__);
-    }
-}
-
 
 void WReconstruction3D::work(std::shared_ptr<std::vector<Datum3D>>& datumsPtr)
 {
@@ -186,7 +138,7 @@ void WReconstruction3D::work(std::shared_ptr<std::vector<Datum3D>>& datumsPtr)
     {
         // Profiling speed
         const auto profilerKey = op::Profiler::timerInit(__LINE__, __FUNCTION__, __FILE__);
-        if (datumsPtr != nullptr && /*!datumsPtr->empty() &&*/ datumsPtr->size() == 2)
+        if (datumsPtr != nullptr && /*!datumsPtr->empty() &&*/ datumsPtr->size() == 3)
         {
             std::vector<op::Array<float>> poseKeypointVector;
             std::vector<op::Array<float>> faceKeypointVector;
@@ -200,13 +152,13 @@ void WReconstruction3D::work(std::shared_ptr<std::vector<Datum3D>>& datumsPtr)
                 rightHandKeypointVector.emplace_back(datumsElement.handKeypoints[1]);
             }
 			// Pose 3-D reconstruction
-			reconstructArray(datumsPtr->at(0).poseKeypoints3D, poseKeypointVector, camera_matrixs);
+			reconstructArray(datumsPtr->at(0).poseKeypoints3D, poseKeypointVector);
 			// Face 3-D reconstruction
-			reconstructArray(datumsPtr->at(0).faceKeypoints3D, faceKeypointVector, camera_matrixs);
+			reconstructArray(datumsPtr->at(0).faceKeypoints3D, faceKeypointVector);
 			// Left hand 3-D reconstruction
-			reconstructArray(datumsPtr->at(0).leftHandKeypoints3D, leftHandKeypointVector, camera_matrixs);
+			reconstructArray(datumsPtr->at(0).leftHandKeypoints3D, leftHandKeypointVector);
 			// Right hand 3-D reconstruction
-			reconstructArray(datumsPtr->at(0).rightHandKeypoints3D, rightHandKeypointVector, camera_matrixs);
+			reconstructArray(datumsPtr->at(0).rightHandKeypoints3D, rightHandKeypointVector);
             // Profiling speed
             op::Profiler::timerEnd(profilerKey);
             op::Profiler::printAveragedTimeMsOnIterationX(profilerKey, __LINE__, __FUNCTION__, __FILE__, 100);

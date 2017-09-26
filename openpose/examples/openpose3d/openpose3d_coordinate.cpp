@@ -248,7 +248,7 @@ int openpose3d(char* argv[])
     //opWrapper.configure(wrapperStructPose, wrapperStructFace, wrapperStructHand, op::WrapperStructInput{}, wrapperStructOutput);
     opWrapper.configure(wrapperStructPose, op::WrapperStructInput{}, wrapperStructOutput);
     // Set to single-thread running (e.g. for debugging purposes)
-    opWrapper.disableMultiThreading();
+    //opWrapper.disableMultiThreading();
 
     op::log("Starting thread(s)", op::Priority::Max);
     // Start, run & stop threads

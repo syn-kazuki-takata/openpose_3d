@@ -1,4 +1,4 @@
-# Install script for directory: /home/kaz/openpose_3d/calibration
+# Install script for directory: /home/rkmtlab/src/kazuki/openpose_3d/calibration
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/kaz/openpose_3d/calibration/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/rkmtlab/src/kazuki/openpose_3d/calibration/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

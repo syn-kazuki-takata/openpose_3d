@@ -235,7 +235,7 @@ int openpose3d(char* argv[])
                                                   */
     
     // Consumer (comment or use default argument to disable any output)
-    const bool displayGui = true;
+    const bool displayGui = false;
     const bool guiVerbose = true;
     const bool fullScreen = false;
     const op::WrapperStructOutput wrapperStructOutput{displayGui, guiVerbose, fullScreen, FLAGS_write_keypoint,
@@ -246,7 +246,7 @@ int openpose3d(char* argv[])
     //opWrapper.configure(wrapperStructPose, wrapperStructFace, wrapperStructHand, op::WrapperStructInput{}, wrapperStructOutput);
     opWrapper.configure(wrapperStructPose, op::WrapperStructInput{}, wrapperStructOutput);
     // Set to single-thread running (e.g. for debugging purposes)
-    opWrapper.disableMultiThreading();
+    // opWrapper.disableMultiThreading();
     
     op::log("Starting thread(s)", op::Priority::Max);
     // Start, run & stop threads

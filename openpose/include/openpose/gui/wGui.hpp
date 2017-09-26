@@ -60,10 +60,8 @@ namespace op
             if (tDatums != nullptr)
             {
                 // Check tDatums->size() == 1
-                /*
-                if (tDatums->size() > 1)
-                    error("Only implemented for tDatums->size() == 1", __LINE__, __FUNCTION__, __FILE__);
-                    */
+                //if (tDatums->size() > 1)
+                    //error("Only implemented for tDatums->size() == 1", __LINE__, __FUNCTION__, __FILE__);
                 // Debugging log
                 dLog("", Priority::Low, __LINE__, __FUNCTION__, __FILE__);
                 // Profiling speed
@@ -71,7 +69,7 @@ namespace op
                 // T* to T
                 auto& tDatumsNoPtr = *tDatums;
                 // Refresh GUI
-                const auto cvOutputData = (!tDatumsNoPtr.empty() ? tDatumsNoPtr[0].cvOutputData : cv::Mat{});
+                const auto cvOutputData = (!tDatumsNoPtr.empty() ? tDatumsNoPtr[0].cvOutputData : cv::Mat());
                 spGui->update(cvOutputData);
                 // Profiling speed
                 if (!tDatumsNoPtr.empty())

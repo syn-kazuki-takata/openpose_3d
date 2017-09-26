@@ -6,5 +6,5 @@ CXX_FLAGS =  -std=c++11 -pthread
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/kaz/openpose_3d/calibration/include -I/usr/local/include/eigen3 -isystem /usr/local/include -isystem /usr/local/include/opencv 
+CXX_INCLUDES = -I/home/rkmtlab/src/kazuki/openpose_3d/calibration/include -I/usr/include/eigen3 -isystem /usr/local/include -isystem /usr/local/include/opencv 
 

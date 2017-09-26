@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/kaz/openpose_3d/calibration/src/video_convert_image.cpp
+/home/rkmtlab/src/kazuki/openpose_3d/calibration/src/video_convert_image.cpp
 opencv2/core.hpp
 -
 opencv2/videoio.hpp
@@ -135,6 +135,8 @@ popcntintrin.h
 -
 immintrin.h
 -
+arm_neon.h
+-
 immintrin.h
 -
 immintrin.h
@@ -247,6 +249,8 @@ opencv2/core/traits.hpp
 /usr/local/include/opencv2/core/opencv2/core/traits.hpp
 opencv2/core/saturate.hpp
 /usr/local/include/opencv2/core/opencv2/core/saturate.hpp
+initializer_list
+-
 
 /usr/local/include/opencv2/core/neon_utils.hpp
 opencv2/core/cvdef.h
@@ -326,6 +330,8 @@ opencv2/core.hpp
 opencv2/core.hpp
 /usr/local/include/opencv2/core/opencv2/core.hpp
 ostream
+-
+functional
 -
 opencv2/core/core_c.h
 /usr/local/include/opencv2/core/opencv2/core/core_c.h

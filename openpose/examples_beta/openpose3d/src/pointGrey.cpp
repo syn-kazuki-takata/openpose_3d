@@ -1,8 +1,6 @@
 ﻿#include <chrono>
 #include <iostream>
 #include <thread>
-#include <opencv2/core.hpp>
-#include <opencv2/sfm.hpp>
 #include <opencv2/opencv.hpp>
 #include <openpose3d/cameraParameters.hpp>
 #include <openpose3d/pointGrey.hpp>
@@ -20,12 +18,12 @@ cv::Mat pointGreyToCvMat(const Spinnaker::ImagePtr &imagePtr)
 		const auto colsize = imagePtr->GetHeight();
 
 		// image data contains padding. When allocating cv::Mat container size, you need to account for the X,Y image data padding.
-		return cv::Mat{(int)(colsize + YPadding), (int)(rowsize + XPadding), CV_8UC3, imagePtr->GetData(), imagePtr->GetStride()};
+		return cv::Mat((int)(colsize + YPadding), (int)(rowsize + XPadding), CV_8UC3, imagePtr->GetData(), imagePtr->GetStride());
 	}
 	catch (const std::exception& e)
 	{
 		op::error(e.what(), __LINE__, __FUNCTION__, __FILE__);
-		return cv::Mat{};
+		return cv::Mat();
 	}
 }
 

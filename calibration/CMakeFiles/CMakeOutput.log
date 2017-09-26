@@ -1,4 +1,4 @@
-The system is: Linux - 4.4.0-93-generic - x86_64
+The system is: Linux - 4.10.0-35-generic - x86_64
 Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
 Compiler: /usr/bin/cc 
 Build flags: 
@@ -10,7 +10,7 @@ The output was:
 
 Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
 
-The C compiler identification is GNU, found in "/home/kaz/openpose_3d/calibration/CMakeFiles/3.5.1/CompilerIdC/a.out"
+The C compiler identification is GNU, found in "/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/3.5.1/CompilerIdC/a.out"
 
 Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
 Compiler: /usr/bin/c++ 
@@ -23,33 +23,33 @@ The output was:
 
 Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
 
-The CXX compiler identification is GNU, found in "/home/kaz/openpose_3d/calibration/CMakeFiles/3.5.1/CompilerIdCXX/a.out"
+The CXX compiler identification is GNU, found in "/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/3.5.1/CompilerIdCXX/a.out"
 
 Determining if the C compiler works passed with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_05a69/fast"
-/usr/bin/make -f CMakeFiles/cmTC_05a69.dir/build.make CMakeFiles/cmTC_05a69.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_05a69.dir/testCCompiler.c.o
-/usr/bin/cc     -o CMakeFiles/cmTC_05a69.dir/testCCompiler.c.o   -c /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_05a69
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_05a69.dir/link.txt --verbose=1
-/usr/bin/cc       CMakeFiles/cmTC_05a69.dir/testCCompiler.c.o  -o cmTC_05a69 -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_ff314/fast"
+/usr/bin/make -f CMakeFiles/cmTC_ff314.dir/build.make CMakeFiles/cmTC_ff314.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_ff314.dir/testCCompiler.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_ff314.dir/testCCompiler.c.o   -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_ff314
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ff314.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_ff314.dir/testCCompiler.c.o  -o cmTC_ff314 -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
 Detecting C compiler ABI info compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_ace82/fast"
-/usr/bin/make -f CMakeFiles/cmTC_ace82.dir/build.make CMakeFiles/cmTC_ace82.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o
-/usr/bin/cc     -o CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.5/Modules/CMakeCCompilerABI.c
-Linking C executable cmTC_ace82
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ace82.dir/link.txt --verbose=1
-/usr/bin/cc      -v CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o  -o cmTC_ace82 -rdynamic  
+Run Build Command:"/usr/bin/make" "cmTC_5ac7d/fast"
+/usr/bin/make -f CMakeFiles/cmTC_5ac7d.dir/build.make CMakeFiles/cmTC_5ac7d.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o
+/usr/bin/cc     -o CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.5/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_5ac7d
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5ac7d.dir/link.txt --verbose=1
+/usr/bin/cc      -v CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o  -o cmTC_5ac7d -rdynamic  
 Using built-in specs.
 COLLECT_GCC=/usr/bin/cc
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper
@@ -59,23 +59,23 @@ Thread model: posix
 gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4) 
 COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/
 LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ace82' '-rdynamic' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/ccQYxNaX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_ace82 /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5ac7d' '-rdynamic' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/ccwaq0up.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_5ac7d /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
 Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
-  ignore line: [Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp]
+  ignore line: [Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_ace82/fast"]
-  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_ace82.dir/build.make CMakeFiles/cmTC_ace82.dir/build]
-  ignore line: [make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp']
-  ignore line: [Building C object CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/usr/bin/cc     -o CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.5/Modules/CMakeCCompilerABI.c]
-  ignore line: [Linking C executable cmTC_ace82]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ace82.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/cc      -v CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o  -o cmTC_ace82 -rdynamic  ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_5ac7d/fast"]
+  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_5ac7d.dir/build.make CMakeFiles/cmTC_5ac7d.dir/build]
+  ignore line: [make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/usr/bin/cc     -o CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.5/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTC_5ac7d]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5ac7d.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/cc      -v CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o  -o cmTC_5ac7d -rdynamic  ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/cc]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper]
@@ -85,13 +85,13 @@ Parsed C implicit link information from above output:
   ignore line: [gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4) ]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ace82' '-rdynamic' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/ccQYxNaX.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_ace82 /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_5ac7d' '-rdynamic' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/ccwaq0up.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_5ac7d /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o]
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/ccQYxNaX.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccwaq0up.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -109,7 +109,7 @@ Parsed C implicit link information from above output:
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-zrelro] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_ace82] ==> ignore
+    arg [cmTC_5ac7d] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o] ==> ignore
@@ -121,7 +121,7 @@ Parsed C implicit link information from above output:
     arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
     arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
     arg [-L/usr/lib/gcc/x86_64-linux-gnu/5/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/5/../../..]
-    arg [CMakeFiles/cmTC_ace82.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_5ac7d.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [--as-needed] ==> ignore
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -153,17 +153,17 @@ Parsed C implicit link information from above output:
 
 
 Detecting C [-std=c11] compiler features compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_65f14/fast"
-/usr/bin/make -f CMakeFiles/cmTC_65f14.dir/build.make CMakeFiles/cmTC_65f14.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_65f14.dir/feature_tests.c.o
-/usr/bin/cc    -std=c11 -o CMakeFiles/cmTC_65f14.dir/feature_tests.c.o   -c /home/kaz/openpose_3d/calibration/CMakeFiles/feature_tests.c
-Linking C executable cmTC_65f14
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_65f14.dir/link.txt --verbose=1
-/usr/bin/cc       CMakeFiles/cmTC_65f14.dir/feature_tests.c.o  -o cmTC_65f14 -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_cb5ab/fast"
+/usr/bin/make -f CMakeFiles/cmTC_cb5ab.dir/build.make CMakeFiles/cmTC_cb5ab.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_cb5ab.dir/feature_tests.c.o
+/usr/bin/cc    -std=c11 -o CMakeFiles/cmTC_cb5ab.dir/feature_tests.c.o   -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/feature_tests.c
+Linking C executable cmTC_cb5ab
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cb5ab.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_cb5ab.dir/feature_tests.c.o  -o cmTC_cb5ab -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -173,17 +173,17 @@ make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTm
 
 
 Detecting C [-std=c99] compiler features compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_30e9a/fast"
-/usr/bin/make -f CMakeFiles/cmTC_30e9a.dir/build.make CMakeFiles/cmTC_30e9a.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_30e9a.dir/feature_tests.c.o
-/usr/bin/cc    -std=c99 -o CMakeFiles/cmTC_30e9a.dir/feature_tests.c.o   -c /home/kaz/openpose_3d/calibration/CMakeFiles/feature_tests.c
-Linking C executable cmTC_30e9a
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_30e9a.dir/link.txt --verbose=1
-/usr/bin/cc       CMakeFiles/cmTC_30e9a.dir/feature_tests.c.o  -o cmTC_30e9a -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_4e9e7/fast"
+/usr/bin/make -f CMakeFiles/cmTC_4e9e7.dir/build.make CMakeFiles/cmTC_4e9e7.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_4e9e7.dir/feature_tests.c.o
+/usr/bin/cc    -std=c99 -o CMakeFiles/cmTC_4e9e7.dir/feature_tests.c.o   -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/feature_tests.c
+Linking C executable cmTC_4e9e7
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4e9e7.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_4e9e7.dir/feature_tests.c.o  -o cmTC_4e9e7 -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -193,17 +193,17 @@ make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTm
 
 
 Detecting C [-std=c90] compiler features compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_8230e/fast"
-/usr/bin/make -f CMakeFiles/cmTC_8230e.dir/build.make CMakeFiles/cmTC_8230e.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_8230e.dir/feature_tests.c.o
-/usr/bin/cc    -std=c90 -o CMakeFiles/cmTC_8230e.dir/feature_tests.c.o   -c /home/kaz/openpose_3d/calibration/CMakeFiles/feature_tests.c
-Linking C executable cmTC_8230e
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8230e.dir/link.txt --verbose=1
-/usr/bin/cc       CMakeFiles/cmTC_8230e.dir/feature_tests.c.o  -o cmTC_8230e -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_1187e/fast"
+/usr/bin/make -f CMakeFiles/cmTC_1187e.dir/build.make CMakeFiles/cmTC_1187e.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_1187e.dir/feature_tests.c.o
+/usr/bin/cc    -std=c90 -o CMakeFiles/cmTC_1187e.dir/feature_tests.c.o   -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/feature_tests.c
+Linking C executable cmTC_1187e
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1187e.dir/link.txt --verbose=1
+/usr/bin/cc       CMakeFiles/cmTC_1187e.dir/feature_tests.c.o  -o cmTC_1187e -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -211,30 +211,30 @@ make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTm
     Feature record: C_FEATURE:0c_static_assert
     Feature record: C_FEATURE:0c_variadic_macros
 Determining if the CXX compiler works passed with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_6ed54/fast"
-/usr/bin/make -f CMakeFiles/cmTC_6ed54.dir/build.make CMakeFiles/cmTC_6ed54.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_6ed54.dir/testCXXCompiler.cxx.o
-/usr/bin/c++      -o CMakeFiles/cmTC_6ed54.dir/testCXXCompiler.cxx.o -c /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_6ed54
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6ed54.dir/link.txt --verbose=1
-/usr/bin/c++        CMakeFiles/cmTC_6ed54.dir/testCXXCompiler.cxx.o  -o cmTC_6ed54 -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_1c740/fast"
+/usr/bin/make -f CMakeFiles/cmTC_1c740.dir/build.make CMakeFiles/cmTC_1c740.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_1c740.dir/testCXXCompiler.cxx.o
+/usr/bin/c++      -o CMakeFiles/cmTC_1c740.dir/testCXXCompiler.cxx.o -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_1c740
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1c740.dir/link.txt --verbose=1
+/usr/bin/c++        CMakeFiles/cmTC_1c740.dir/testCXXCompiler.cxx.o  -o cmTC_1c740 -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
 Detecting CXX compiler ABI info compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_03d4a/fast"
-/usr/bin/make -f CMakeFiles/cmTC_03d4a.dir/build.make CMakeFiles/cmTC_03d4a.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o
-/usr/bin/c++      -o CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.5/Modules/CMakeCXXCompilerABI.cpp
-Linking CXX executable cmTC_03d4a
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_03d4a.dir/link.txt --verbose=1
-/usr/bin/c++       -v CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_03d4a -rdynamic  
+Run Build Command:"/usr/bin/make" "cmTC_cadcd/fast"
+/usr/bin/make -f CMakeFiles/cmTC_cadcd.dir/build.make CMakeFiles/cmTC_cadcd.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o
+/usr/bin/c++      -o CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.5/Modules/CMakeCXXCompilerABI.cpp
+Linking CXX executable cmTC_cadcd
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cadcd.dir/link.txt --verbose=1
+/usr/bin/c++       -v CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_cadcd -rdynamic  
 Using built-in specs.
 COLLECT_GCC=/usr/bin/c++
 COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper
@@ -244,23 +244,23 @@ Thread model: posix
 gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4) 
 COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/
 LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_03d4a' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8206ch.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_03d4a /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_cadcd' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/ccYjaprZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_cadcd /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
 Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
-  ignore line: [Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp]
+  ignore line: [Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_03d4a/fast"]
-  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_03d4a.dir/build.make CMakeFiles/cmTC_03d4a.dir/build]
-  ignore line: [make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/usr/bin/c++      -o CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.5/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Linking CXX executable cmTC_03d4a]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_03d4a.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/c++       -v CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_03d4a -rdynamic  ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_cadcd/fast"]
+  ignore line: [/usr/bin/make -f CMakeFiles/cmTC_cadcd.dir/build.make CMakeFiles/cmTC_cadcd.dir/build]
+  ignore line: [make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/usr/bin/c++      -o CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.5/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Linking CXX executable cmTC_cadcd]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cadcd.dir/link.txt --verbose=1]
+  ignore line: [/usr/bin/c++       -v CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_cadcd -rdynamic  ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/usr/bin/c++]
   ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper]
@@ -270,13 +270,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [gcc version 5.4.0 20160609 (Ubuntu 5.4.0-6ubuntu1~16.04.4) ]
   ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/]
   ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/5/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/5/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_03d4a' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/cc8206ch.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_03d4a /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_cadcd' '-rdynamic' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /usr/lib/gcc/x86_64-linux-gnu/5/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper -plugin-opt=-fresolution=/tmp/ccYjaprZ.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/ --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -z relro -o cmTC_cadcd /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o -L/usr/lib/gcc/x86_64-linux-gnu/5 -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/5/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/5/../../.. CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/5/crtend.o /usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crtn.o]
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/5/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/cc8206ch.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccYjaprZ.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -294,7 +294,7 @@ Parsed CXX implicit link information from above output:
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-zrelro] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_03d4a] ==> ignore
+    arg [cmTC_cadcd] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crt1.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/../../../x86_64-linux-gnu/crti.o] ==> ignore
     arg [/usr/lib/gcc/x86_64-linux-gnu/5/crtbegin.o] ==> ignore
@@ -306,7 +306,7 @@ Parsed CXX implicit link information from above output:
     arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
     arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
     arg [-L/usr/lib/gcc/x86_64-linux-gnu/5/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/5/../../..]
-    arg [CMakeFiles/cmTC_03d4a.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_cadcd.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -336,17 +336,17 @@ Parsed CXX implicit link information from above output:
 
 
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_37099/fast"
-/usr/bin/make -f CMakeFiles/cmTC_37099.dir/build.make CMakeFiles/cmTC_37099.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_37099.dir/feature_tests.cxx.o
-/usr/bin/c++     -std=c++14 -o CMakeFiles/cmTC_37099.dir/feature_tests.cxx.o -c /home/kaz/openpose_3d/calibration/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_37099
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_37099.dir/link.txt --verbose=1
-/usr/bin/c++        CMakeFiles/cmTC_37099.dir/feature_tests.cxx.o  -o cmTC_37099 -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_9ae87/fast"
+/usr/bin/make -f CMakeFiles/cmTC_9ae87.dir/build.make CMakeFiles/cmTC_9ae87.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9ae87.dir/feature_tests.cxx.o
+/usr/bin/c++     -std=c++14 -o CMakeFiles/cmTC_9ae87.dir/feature_tests.cxx.o -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_9ae87
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9ae87.dir/link.txt --verbose=1
+/usr/bin/c++        CMakeFiles/cmTC_9ae87.dir/feature_tests.cxx.o  -o cmTC_9ae87 -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -409,17 +409,17 @@ make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTm
 
 
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_e1144/fast"
-/usr/bin/make -f CMakeFiles/cmTC_e1144.dir/build.make CMakeFiles/cmTC_e1144.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_e1144.dir/feature_tests.cxx.o
-/usr/bin/c++     -std=c++11 -o CMakeFiles/cmTC_e1144.dir/feature_tests.cxx.o -c /home/kaz/openpose_3d/calibration/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_e1144
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e1144.dir/link.txt --verbose=1
-/usr/bin/c++        CMakeFiles/cmTC_e1144.dir/feature_tests.cxx.o  -o cmTC_e1144 -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_0d2fd/fast"
+/usr/bin/make -f CMakeFiles/cmTC_0d2fd.dir/build.make CMakeFiles/cmTC_0d2fd.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_0d2fd.dir/feature_tests.cxx.o
+/usr/bin/c++     -std=c++11 -o CMakeFiles/cmTC_0d2fd.dir/feature_tests.cxx.o -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_0d2fd
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0d2fd.dir/link.txt --verbose=1
+/usr/bin/c++        CMakeFiles/cmTC_0d2fd.dir/feature_tests.cxx.o  -o cmTC_0d2fd -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -482,17 +482,17 @@ make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTm
 
 
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_2543e/fast"
-/usr/bin/make -f CMakeFiles/cmTC_2543e.dir/build.make CMakeFiles/cmTC_2543e.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_2543e.dir/feature_tests.cxx.o
-/usr/bin/c++     -std=c++98 -o CMakeFiles/cmTC_2543e.dir/feature_tests.cxx.o -c /home/kaz/openpose_3d/calibration/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_2543e
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_2543e.dir/link.txt --verbose=1
-/usr/bin/c++        CMakeFiles/cmTC_2543e.dir/feature_tests.cxx.o  -o cmTC_2543e -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_3b973/fast"
+/usr/bin/make -f CMakeFiles/cmTC_3b973.dir/build.make CMakeFiles/cmTC_3b973.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_3b973.dir/feature_tests.cxx.o
+/usr/bin/c++     -std=c++98 -o CMakeFiles/cmTC_3b973.dir/feature_tests.cxx.o -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_3b973
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3b973.dir/link.txt --verbose=1
+/usr/bin/c++        CMakeFiles/cmTC_3b973.dir/feature_tests.cxx.o  -o cmTC_3b973 -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -553,30 +553,30 @@ make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTm
     Feature record: CXX_FEATURE:0cxx_variadic_macros
     Feature record: CXX_FEATURE:0cxx_variadic_templates
 Determining if the include file pthread.h exists passed with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_6253c/fast"
-/usr/bin/make -f CMakeFiles/cmTC_6253c.dir/build.make CMakeFiles/cmTC_6253c.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_6253c.dir/CheckIncludeFile.c.o
-/usr/bin/cc    -fPIC    -o CMakeFiles/cmTC_6253c.dir/CheckIncludeFile.c.o   -c /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp/CheckIncludeFile.c
-Linking C executable cmTC_6253c
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6253c.dir/link.txt --verbose=1
-/usr/bin/cc  -fPIC     CMakeFiles/cmTC_6253c.dir/CheckIncludeFile.c.o  -o cmTC_6253c -rdynamic 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_165e5/fast"
+/usr/bin/make -f CMakeFiles/cmTC_165e5.dir/build.make CMakeFiles/cmTC_165e5.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_165e5.dir/CheckIncludeFile.c.o
+/usr/bin/cc    -fPIC    -o CMakeFiles/cmTC_165e5.dir/CheckIncludeFile.c.o   -c /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+Linking C executable cmTC_165e5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_165e5.dir/link.txt --verbose=1
+/usr/bin/cc  -fPIC     CMakeFiles/cmTC_165e5.dir/CheckIncludeFile.c.o  -o cmTC_165e5 -rdynamic 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
 Determining if the function pthread_create exists in the pthread passed with the following output:
-Change Dir: /home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp
+Change Dir: /home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_48691/fast"
-/usr/bin/make -f CMakeFiles/cmTC_48691.dir/build.make CMakeFiles/cmTC_48691.dir/build
-make[1]: Entering directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_48691.dir/CheckFunctionExists.c.o
-/usr/bin/cc    -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_48691.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
-Linking C executable cmTC_48691
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_48691.dir/link.txt --verbose=1
-/usr/bin/cc  -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_48691.dir/CheckFunctionExists.c.o  -o cmTC_48691 -rdynamic -lpthread 
-make[1]: Leaving directory '/home/kaz/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Run Build Command:"/usr/bin/make" "cmTC_5ed85/fast"
+/usr/bin/make -f CMakeFiles/cmTC_5ed85.dir/build.make CMakeFiles/cmTC_5ed85.dir/build
+make[1]: Entering directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_5ed85.dir/CheckFunctionExists.c.o
+/usr/bin/cc    -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_5ed85.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.5/Modules/CheckFunctionExists.c
+Linking C executable cmTC_5ed85
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5ed85.dir/link.txt --verbose=1
+/usr/bin/cc  -fPIC -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_5ed85.dir/CheckFunctionExists.c.o  -o cmTC_5ed85 -rdynamic -lpthread 
+make[1]: Leaving directory '/home/rkmtlab/src/kazuki/openpose_3d/calibration/CMakeFiles/CMakeTmp'
 
 
